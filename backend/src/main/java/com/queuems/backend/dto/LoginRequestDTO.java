@@ -1,2 +1,9 @@
-package com.queuems.backend.dto;public class LoginRequestDTO {
+package com.queuems.backend.dto;
+
+import lombok.Data;
+
+@Data
+public class LoginRequestDTO {
+    private String email;
+    private String password;
 }
