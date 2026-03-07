@@ -1,9 +1,9 @@
-package com.queuems.backend.controller;
+package edu.cit.barcenas.queuems.controller;
 
-import com.queuems.backend.dto.AuthResponseDTO;
-import com.queuems.backend.dto.LoginRequestDTO;
-import com.queuems.backend.dto.RegisterRequestDTO;
-import com.queuems.backend.service.AuthService;
+import edu.cit.barcenas.queuems.dto.AuthResponseDTO;
+import edu.cit.barcenas.queuems.dto.LoginRequestDTO;
+import edu.cit.barcenas.queuems.dto.RegisterRequestDTO;
+import edu.cit.barcenas.queuems.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +31,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO dto) {
         try {
             String backendToken = authService.login(dto);
-            return ResponseEntity.ok(new AuthResponseDTO(backendToken,  /*expires*/ 86400000L));
+            return ResponseEntity.ok(new AuthResponseDTO(backendToken, /* expires */ 86400000L));
         } catch (Exception e) {
             return ResponseEntity.status(401).body(e.getMessage());
         }

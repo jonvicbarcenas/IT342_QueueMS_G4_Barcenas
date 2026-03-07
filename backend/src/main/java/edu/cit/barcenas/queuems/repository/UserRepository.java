@@ -1,9 +1,9 @@
-package com.queuems.backend.repository;
+package edu.cit.barcenas.queuems.repository;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
-import com.queuems.backend.model.User;
+import edu.cit.barcenas.queuems.model.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.ExecutionException;
@@ -25,7 +25,8 @@ public class UserRepository {
 
     public User findByUid(String uid) throws ExecutionException, InterruptedException {
         var doc = firestore.collection("users").document(uid).get().get();
-        if (!doc.exists()) return null;
+        if (!doc.exists())
+            return null;
         return doc.toObject(User.class);
     }
 }

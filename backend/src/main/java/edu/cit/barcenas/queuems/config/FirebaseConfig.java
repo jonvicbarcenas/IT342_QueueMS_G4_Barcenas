@@ -1,4 +1,4 @@
-package com.queuems.backend.config;
+package edu.cit.barcenas.queuems.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Firestore;
@@ -17,8 +17,7 @@ public class FirebaseConfig {
     @Bean
     public FirebaseApp firebaseApp() throws Exception {
 
-        FileInputStream serviceAccount =
-                new FileInputStream("src/main/resources/firebase-service-account.json");
+        FileInputStream serviceAccount = new FileInputStream("src/main/resources/firebase-service-account.json");
 
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
