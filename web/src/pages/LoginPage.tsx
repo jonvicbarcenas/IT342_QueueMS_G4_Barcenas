@@ -12,24 +12,16 @@ const LoginPage = () => {
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
-    setSuccessMessage('');
     setIsLoading(true);
 
     try {
       await login(formData);
-      
-      // Show success message
-      setSuccessMessage('Login successful! Redirecting to dashboard...');
-      
-      // Redirect after 1.5 seconds
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
+      navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
     } finally {
@@ -38,7 +30,6 @@ const LoginPage = () => {
   };
 
   const handleGoogleSignIn = () => {
-    // TODO: Implement Google Sign-In
     alert('Google Sign-In coming soon!');
   };
 
@@ -58,17 +49,7 @@ const LoginPage = () => {
           QueueMS Smart Queue Management System
         </p>
 
-        {/* Success Message */}
-        {successMessage && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <p className="text-sm text-green-600 font-medium">{successMessage}</p>
-            </div>
-          </div>
-        )}
+
 
         {/* Error Message */}
         {error && (

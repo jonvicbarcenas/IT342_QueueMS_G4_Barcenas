@@ -1,7 +1,7 @@
 import { useAuth } from '@context';
 
 const DashboardPage = () => {
-  const { user, logout } = useAuth();
+  const { user, isLoading, logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -23,7 +23,7 @@ const DashboardPage = () => {
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-2xl font-bold mb-4">Welcome to QueueMS!</h2>
           <p className="text-gray-600">
-            {user ? `Logged in as: ${user.email}` : 'Loading user information...'}
+            {isLoading ? 'Loading user information...' : `Logged in as: ${user?.email ?? 'Unknown'}`}
           </p>
           <p className="text-gray-500 mt-4">
             This is your dashboard. Queue management features coming soon!
