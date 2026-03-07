@@ -3,6 +3,25 @@ import type { User, AuthState, LoginRequest, RegisterRequest } from '@types/auth
 import { authService } from '@services/authService';
 import { setAuthToken, removeAuthToken, getAuthToken } from '@services/api';
 
+const USER_KEY = 'authUser';
+
+const getStoredUser = (): User | null => {
+  try {
+    const raw = localStorage.getItem(USER_KEY);
+    return raw ? (JSON.parse(raw) as User) : null;
+  } catch {
+    return null;
+  }
+};
+
+const setStoredUser = (user: User): void => {
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+};
+
+const removeStoredUser = (): void => {
+  localStorage.removeItem(USER_KEY);
+};
+
 interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
@@ -19,13 +38,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: true,
   });
 
-  // Check for existing token on mount
+  // Restore session from localStorage on mount
   useEffect(() => {
     const token = getAuthToken();
-    if (token) {
-      // TODO: Validate token with backend or decode JWT
+    const user = getStoredUser();
+    if (token && user) {
       setAuthState({
-        user: null, // Set user data when available
+        user,
         token,
         isAuthenticated: true,
         isLoading: false,
@@ -39,15 +58,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await authService.login(credentials);
       setAuthToken(response.backendToken);
-      
-      // TODO: Decode JWT or fetch user data
-      const user: User = {
-        id: 'temp-id',
+
+      let user: User = {
+        id: '',
         email: credentials.email,
         firstname: '',
         lastname: '',
       };
+      try {
+        const payload = JSON.parse(atob(response.backendToken.split('.')[1]));
+        user = {
+          id: payload.sub ?? '',
+          email: payload.email ?? credentials.email,
+          firstname: payload.firstname ?? '',
+          lastname: payload.lastname ?? '',
+          role: payload.role,
+        };
+      } catch {
+      }
 
+      setStoredUser(user);
       setAuthState({
         user,
         token: response.backendToken,
@@ -62,7 +92,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (data: RegisterRequest) => {
     try {
       await authService.register(data);
-      // After successful registration, log the user in
       await login({ email: data.email, password: data.password });
     } catch (error) {
       throw error;
@@ -71,6 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     removeAuthToken();
+    removeStoredUser();
     setAuthState({
       user: null,
       token: null,
