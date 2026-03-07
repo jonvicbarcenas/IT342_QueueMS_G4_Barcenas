@@ -1,4 +1,4 @@
-package com.queuems.backend.service;
+package edu.cit.barcenas.queuems.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

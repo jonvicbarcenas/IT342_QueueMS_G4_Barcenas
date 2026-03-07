@@ -1,4 +1,4 @@
-package com.queuems.backend.model;
+package edu.cit.barcenas.queuems.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

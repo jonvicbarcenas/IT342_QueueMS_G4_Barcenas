@@ -1,4 +1,5 @@
-package com.queuems.backend.config;// in any @Configuration class
+package edu.cit.barcenas.queuems.config;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;

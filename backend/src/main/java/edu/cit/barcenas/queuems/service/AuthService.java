@@ -1,14 +1,14 @@
-package com.queuems.backend.service;
+package edu.cit.barcenas.queuems.service;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
 import com.google.firebase.auth.FirebaseToken;
-import com.queuems.backend.dto.LoginRequestDTO;
-import com.queuems.backend.dto.RegisterRequestDTO;
-import com.queuems.backend.model.User;
-import com.queuems.backend.repository.UserRepository;
+import edu.cit.barcenas.queuems.dto.LoginRequestDTO;
+import edu.cit.barcenas.queuems.dto.RegisterRequestDTO;
+import edu.cit.barcenas.queuems.model.User;
+import edu.cit.barcenas.queuems.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -75,7 +75,9 @@ public class AuthService {
     }
 
     // local helper classes
-    private static record SignInPayload(String email, String password, boolean returnSecureToken) {}
+    private static record SignInPayload(String email, String password, boolean returnSecureToken) {
+    }
+
     private static class FirebaseSignInResponse {
         public String idToken;
         public String refreshToken;

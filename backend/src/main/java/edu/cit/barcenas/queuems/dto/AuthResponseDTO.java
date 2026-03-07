@@ -1,4 +1,4 @@
-package com.queuems.backend.dto;
+package edu.cit.barcenas.queuems.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
