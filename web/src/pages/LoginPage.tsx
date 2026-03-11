@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@context';
 import { Button, Input } from '@components/common';
+import { authService } from '@services/authService';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -30,7 +31,8 @@ const LoginPage = () => {
   };
 
   const handleGoogleSignIn = () => {
-    alert('Google Sign-In coming soon!');
+    // Redirect to backend OAuth2 endpoint
+    authService.initiateGoogleLogin();
   };
 
   return (

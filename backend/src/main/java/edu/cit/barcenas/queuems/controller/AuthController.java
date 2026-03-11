@@ -7,6 +7,8 @@ import edu.cit.barcenas.queuems.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("api/auth")
 public class AuthController {
@@ -35,5 +37,12 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(401).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/google/login")
+    public ResponseEntity<?> googleLogin() {
+        // This endpoint returns the OAuth2 login URL for the frontend to redirect to
+        String googleLoginUrl = "/oauth2/authorization/google";
+        return ResponseEntity.ok(Map.of("redirectUrl", googleLoginUrl));
     }
 }
