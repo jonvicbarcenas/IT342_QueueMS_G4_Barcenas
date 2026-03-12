@@ -3,6 +3,7 @@ package edu.cit.barcenas.queuems.repository;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QuerySnapshot;
 import edu.cit.barcenas.queuems.model.User;
 import org.springframework.stereotype.Repository;
 
@@ -28,5 +29,19 @@ public class UserRepository {
         if (!doc.exists())
             return null;
         return doc.toObject(User.class);
+    }
+
+    public User findByEmail(String email) throws ExecutionException, InterruptedException {
+        QuerySnapshot querySnapshot = firestore.collection("users")
+                .whereEqualTo("email", email)
+                .limit(1)
+                .get()
+                .get();
+        
+        if (querySnapshot.isEmpty()) {
+            return null;
+        }
+        
+        return querySnapshot.getDocuments().get(0).toObject(User.class);
     }
 }
