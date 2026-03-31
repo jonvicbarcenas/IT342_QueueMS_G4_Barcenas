@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import type { User, AuthState, LoginRequest, RegisterRequest } from '@types/auth';
 import { authService } from '@services/authService';
 import { setAuthToken, removeAuthToken, getAuthToken } from '@services/api';
@@ -25,6 +25,7 @@ const removeStoredUser = (): void => {
 interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
+  loginWithToken: (token: string) => void;
   logout: () => void;
 }
 
@@ -54,7 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const login = async (credentials: LoginRequest) => {
+  const login = useCallback(async (credentials: LoginRequest) => {
     try {
       const response = await authService.login(credentials);
       setAuthToken(response.backendToken);
@@ -87,18 +88,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       throw error;
     }
-  };
+  }, []);
 
-  const register = async (data: RegisterRequest) => {
+  const register = useCallback(async (data: RegisterRequest) => {
     try {
       await authService.register(data);
       await login({ email: data.email, password: data.password });
     } catch (error) {
       throw error;
     }
-  };
+  }, [login]);
 
-  const logout = () => {
+  const loginWithToken = useCallback((token: string) => {
+    setAuthToken(token);
+
+    // Decode JWT to get user information
+    let user: User = {
+      id: '',
+      email: '',
+      firstname: '',
+      lastname: '',
+    };
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      user = {
+        id: payload.sub ?? '',
+        email: payload.email ?? '',
+        firstname: payload.firstname ?? '',
+        lastname: payload.lastname ?? '',
+        role: payload.role,
+      };
+    } catch (error) {
+      console.error('Failed to decode token:', error);
+    }
+
+    setStoredUser(user);
+    setAuthState({
+      user,
+      token,
+      isAuthenticated: true,
+      isLoading: false,
+    });
+  }, []);
+
+  const logout = useCallback(() => {
     removeAuthToken();
     removeStoredUser();
     setAuthState({
@@ -107,10 +141,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAuthenticated: false,
       isLoading: false,
     });
-  };
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ ...authState, login, register, logout }}>
+    <AuthContext.Provider value={{ ...authState, login, register, loginWithToken, logout }}>
       {children}
     </AuthContext.Provider>
   );

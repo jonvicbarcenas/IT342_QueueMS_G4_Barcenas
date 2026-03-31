@@ -5,6 +5,7 @@ import { API_BASE_URL } from './api';
 const AUTH_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/api/auth/login`,
   REGISTER: `${API_BASE_URL}/api/auth/register`,
+  GOOGLE_LOGIN: `${API_BASE_URL}/oauth2/authorization/google`,
 } as const;
 
 export const authService = {
@@ -40,9 +41,14 @@ export const authService = {
     }
   },
 
-  async loginWithGoogle(idToken: string): Promise<AuthResponse> {
-    // TODO: Implement Google login when backend endpoint is ready
-    throw new Error('Google login not yet implemented');
+  // Initiate Google OAuth2 login by redirecting to backend OAuth2 endpoint
+  initiateGoogleLogin(): void {
+    window.location.href = AUTH_ENDPOINTS.GOOGLE_LOGIN;
+  },
+
+  // Get OAuth2 login URL (alternative method if you want to open in popup)
+  getGoogleLoginUrl(): string {
+    return AUTH_ENDPOINTS.GOOGLE_LOGIN;
   },
 };
 
