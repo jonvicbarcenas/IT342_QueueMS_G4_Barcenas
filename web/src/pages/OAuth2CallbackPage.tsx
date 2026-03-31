@@ -9,28 +9,37 @@ const OAuth2CallbackPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    const errorParam = searchParams.get('error');
+    const handleCallback = async () => {
+      const token = searchParams.get('token');
+      const errorParam = searchParams.get('error');
 
-    if (token) {
-      try {
-        // Login with the token received from backend
-        loginWithToken(token);
-        // Small delay to ensure state is updated before navigation
-        setTimeout(() => {
-          navigate('/dashboard', { replace: true });
-        }, 100);
-      } catch (err) {
-        setError('Failed to authenticate. Please try again.');
+      if (token) {
+        try {
+          // Login with the token received from backend
+          await loginWithToken(token);
+          // Small delay to ensure state is updated before navigation
+          setTimeout(() => {
+            navigate('/dashboard', { replace: true });
+          }, 100);
+        } catch (err) {
+          setError('Failed to authenticate. Please try again.');
+          setTimeout(() => navigate('/login'), 3000);
+        }
+      } else if (errorParam) {
+        setError(decodeURIComponent(errorParam));
         setTimeout(() => navigate('/login'), 3000);
+      } else {
+        const timer = setTimeout(() => {
+          if (!token && !errorParam) {
+            setError('Invalid authentication response.');
+            setTimeout(() => navigate('/login'), 3000);
+          }
+        }, 500);
+        return () => clearTimeout(timer);
       }
-    } else if (errorParam) {
-      setError(decodeURIComponent(errorParam));
-      setTimeout(() => navigate('/login'), 3000);
-    } else {
-      setError('Invalid authentication response.');
-      setTimeout(() => navigate('/login'), 3000);
-    }
+    };
+
+    handleCallback();
   }, [searchParams, navigate, loginWithToken]);
 
   if (error) {

@@ -25,8 +25,9 @@ const removeStoredUser = (): void => {
 interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
-  loginWithToken: (token: string) => void;
+  loginWithToken: (token: string) => Promise<void>;
   logout: () => void;
+  loadUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,99 +40,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: true,
   });
 
-  // Restore session from localStorage on mount
-  useEffect(() => {
-    const token = getAuthToken();
-    const user = getStoredUser();
-    if (token && user) {
-      setAuthState({
-        user,
-        token,
-        isAuthenticated: true,
-        isLoading: false,
-      });
-    } else {
-      setAuthState(prev => ({ ...prev, isLoading: false }));
-    }
-  }, []);
-
-  const login = useCallback(async (credentials: LoginRequest) => {
-    try {
-      const response = await authService.login(credentials);
-      setAuthToken(response.backendToken);
-
-      let user: User = {
-        id: '',
-        email: credentials.email,
-        firstname: '',
-        lastname: '',
-      };
-      try {
-        const payload = JSON.parse(atob(response.backendToken.split('.')[1]));
-        user = {
-          id: payload.sub ?? '',
-          email: payload.email ?? credentials.email,
-          firstname: payload.firstname ?? '',
-          lastname: payload.lastname ?? '',
-          role: payload.role,
-        };
-      } catch {
-      }
-
-      setStoredUser(user);
-      setAuthState({
-        user,
-        token: response.backendToken,
-        isAuthenticated: true,
-        isLoading: false,
-      });
-    } catch (error) {
-      throw error;
-    }
-  }, []);
-
-  const register = useCallback(async (data: RegisterRequest) => {
-    try {
-      await authService.register(data);
-      await login({ email: data.email, password: data.password });
-    } catch (error) {
-      throw error;
-    }
-  }, [login]);
-
-  const loginWithToken = useCallback((token: string) => {
-    setAuthToken(token);
-
-    // Decode JWT to get user information
-    let user: User = {
-      id: '',
-      email: '',
-      firstname: '',
-      lastname: '',
-    };
-    
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      user = {
-        id: payload.sub ?? '',
-        email: payload.email ?? '',
-        firstname: payload.firstname ?? '',
-        lastname: payload.lastname ?? '',
-        role: payload.role,
-      };
-    } catch (error) {
-      console.error('Failed to decode token:', error);
-    }
-
-    setStoredUser(user);
-    setAuthState({
-      user,
-      token,
-      isAuthenticated: true,
-      isLoading: false,
-    });
-  }, []);
-
   const logout = useCallback(() => {
     removeAuthToken();
     removeStoredUser();
@@ -143,8 +51,77 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
+  const loadUser = useCallback(async () => {
+    const token = getAuthToken();
+    if (!token) {
+      setAuthState(prev => ({ ...prev, isLoading: false }));
+      return;
+    }
+
+    try {
+      const user = await authService.getMe();
+      setStoredUser(user);
+      setAuthState({
+        user,
+        token,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error('Failed to load user:', error);
+      logout();
+    }
+  }, [logout]);
+
+  // Restore session on mount
+  useEffect(() => {
+    const token = getAuthToken();
+    const user = getStoredUser();
+
+    if (token) {
+      // If we have a stored user, show it immediately but refresh from backend
+      if (user) {
+        setAuthState({
+          user,
+          token,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+        loadUser();
+      } else {
+        loadUser();
+      }
+    } else {
+      setAuthState(prev => ({ ...prev, isLoading: false }));
+    }
+  }, [loadUser]);
+
+  const login = useCallback(async (credentials: LoginRequest) => {
+    try {
+      const response = await authService.login(credentials);
+      setAuthToken(response.backendToken);
+      await loadUser();
+    } catch (error) {
+      throw error;
+    }
+  }, [loadUser]);
+
+  const register = useCallback(async (data: RegisterRequest) => {
+    try {
+      await authService.register(data);
+      await login({ email: data.email, password: data.password });
+    } catch (error) {
+      throw error;
+    }
+  }, [login]);
+
+  const loginWithToken = useCallback(async (token: string) => {
+    setAuthToken(token);
+    await loadUser();
+  }, [loadUser]);
+
   return (
-    <AuthContext.Provider value={{ ...authState, login, register, loginWithToken, logout }}>
+    <AuthContext.Provider value={{ ...authState, login, register, loginWithToken, logout, loadUser }}>
       {children}
     </AuthContext.Provider>
   );

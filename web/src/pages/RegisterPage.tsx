@@ -84,8 +84,8 @@ const RegisterPage = () => {
   };
 
   const handleGoogleSignIn = () => {
-    // TODO: Implement Google Sign-In
-    alert('Google Sign-In coming soon!');
+    // Redirect to backend OAuth2 endpoint
+    authService.initiateGoogleLogin();
   };
 
   return (

@@ -1,11 +1,12 @@
 // Authentication API service
-import type { LoginRequest, RegisterRequest, AuthResponse } from '@types/auth';
-import { API_BASE_URL } from './api';
+import type { LoginRequest, RegisterRequest, AuthResponse, User } from '@types/auth';
+import { API_BASE_URL, authenticatedFetch } from './api';
 
 const AUTH_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/api/auth/login`,
   REGISTER: `${API_BASE_URL}/api/auth/register`,
   GOOGLE_LOGIN: `${API_BASE_URL}/oauth2/authorization/google`,
+  ME: `${API_BASE_URL}/api/auth/me`,
 } as const;
 
 export const authService = {
@@ -39,6 +40,17 @@ export const authService = {
       const error = await response.text();
       throw new Error(error || 'Registration failed');
     }
+  },
+
+  async getMe(): Promise<User> {
+    const response = await authenticatedFetch(AUTH_ENDPOINTS.ME);
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to fetch user profile');
+    }
+
+    return response.json();
   },
 
   // Initiate Google OAuth2 login by redirecting to backend OAuth2 endpoint
