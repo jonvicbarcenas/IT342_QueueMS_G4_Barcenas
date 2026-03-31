@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class AuthService {
@@ -58,5 +59,16 @@ public class AuthService {
 
         // Generate JWT token
         return jwtService.generateToken(user.getUid(), user.getEmail(), user.getRole());
+    }
+
+    /**
+     * Retrieve the authenticated user's profile information by their UID
+     * @param uid the user's unique identifier
+     * @return User object containing user information, or null if not found
+     * @throws ExecutionException if the Firestore operation fails
+     * @throws InterruptedException if the Firestore operation is interrupted
+     */
+    public User getUserById(String uid) throws ExecutionException, InterruptedException {
+        return userRepository.findByUid(uid);
     }
 }
