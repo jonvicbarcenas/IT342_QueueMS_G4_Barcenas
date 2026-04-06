@@ -2,6 +2,7 @@ package edu.cit.barcenas.queuems.service;
 
 import edu.cit.barcenas.queuems.model.User;
 import edu.cit.barcenas.queuems.repository.UserRepository;
+import edu.cit.barcenas.queuems.pattern.adapter.UserAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,18 +36,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         
         try {
-            // Extract user information from OAuth2User
-            String email = oAuth2User.getAttribute("email");
-            String givenName = oAuth2User.getAttribute("given_name");
-            String familyName = oAuth2User.getAttribute("family_name");
-            
             // Check if user exists
+            String email = oAuth2User.getAttribute("email");
             User user = userRepository.findByEmail(email);
             
             if (user == null) {
-                // Create new user
-                String uid = UUID.randomUUID().toString();
-                user = new User(uid, email, null, givenName, familyName, "USER");
+                // Create new user using Adapter pattern
+                user = UserAdapter.adapt(oAuth2User);
+                user.setUid(UUID.randomUUID().toString());
                 userRepository.save(user);
             }
             
