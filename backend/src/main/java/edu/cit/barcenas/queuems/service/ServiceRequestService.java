@@ -2,6 +2,7 @@ package edu.cit.barcenas.queuems.service;
 
 import edu.cit.barcenas.queuems.model.ServiceRequest;
 import edu.cit.barcenas.queuems.pattern.factory.ServiceRequestFactory;
+import edu.cit.barcenas.queuems.pattern.observer.QueueStatusObserver;
 import edu.cit.barcenas.queuems.pattern.strategy.QueueNumberStrategy;
 import edu.cit.barcenas.queuems.repository.ServiceRequestRepository;
 import org.springframework.stereotype.Service;
@@ -14,10 +15,12 @@ public class ServiceRequestService {
 
     private final ServiceRequestRepository repository;
     private final QueueNumberStrategy strategy;
+    private final List<QueueStatusObserver> observers;
 
-    public ServiceRequestService(ServiceRequestRepository repository, QueueNumberStrategy strategy) {
+    public ServiceRequestService(ServiceRequestRepository repository, QueueNumberStrategy strategy, List<QueueStatusObserver> observers) {
         this.repository = repository;
         this.strategy = strategy;
+        this.observers = observers;
     }
 
     public ServiceRequestRepository getRepository() {
@@ -40,10 +43,19 @@ public class ServiceRequestService {
         if (request != null && ServiceRequest.STATUS_PENDING.equals(request.getStatus())) {
             request.setStatus(ServiceRequest.STATUS_CANCELLED);
             repository.save(request);
+            notifyObservers(request);
         } else if (request == null) {
             throw new RuntimeException("Service request not found: " + requestId);
         } else {
             throw new RuntimeException("Cannot cancel request with status: " + request.getStatus());
         }
+    }
+
+    /**
+     * Notifies all registered observers about a status change.
+     * @param request the request whose status has changed
+     */
+    private void notifyObservers(ServiceRequest request) {
+        observers.forEach(observer -> observer.onStatusChange(request));
     }
 }
