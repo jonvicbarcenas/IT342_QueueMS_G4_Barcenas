@@ -1,37 +1,57 @@
 // API service configuration and utilities
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
-// Get auth token from localStorage
-export const getAuthToken = (): string | null => {
-  return localStorage.getItem('authToken');
-};
+class ApiClient {
+  private static instance: ApiClient;
+  public readonly API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
-// Set auth token in localStorage
-export const setAuthToken = (token: string): void => {
-  localStorage.setItem('authToken', token);
-};
+  private constructor() {}
 
-// Remove auth token from localStorage
-export const removeAuthToken = (): void => {
-  localStorage.removeItem('authToken');
-};
+  public static getInstance(): ApiClient {
+    if (!ApiClient.instance) {
+      ApiClient.instance = new ApiClient();
+    }
+    return ApiClient.instance;
+  }
 
-// Create authenticated fetch wrapper
-export const authenticatedFetch = async (
-  url: string,
-  options: RequestInit = {}
-): Promise<Response> => {
-  const token = getAuthToken();
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
-    ...options.headers,
-  };
+  // Get auth token from localStorage
+  public getAuthToken(): string | null {
+    return localStorage.getItem('authToken');
+  }
 
-  return fetch(url, {
-    ...options,
-    headers,
-  });
-};
+  // Set auth token in localStorage
+  public setAuthToken(token: string): void {
+    localStorage.setItem('authToken', token);
+  }
 
-export { API_BASE_URL };
+  // Remove auth token from localStorage
+  public removeAuthToken(): void {
+    localStorage.removeItem('authToken');
+  }
+
+  // Create authenticated fetch wrapper
+  public async authenticatedFetch(
+    url: string,
+    options: RequestInit = {}
+  ): Promise<Response> {
+    const token = this.getAuthToken();
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    };
+
+    return fetch(url, {
+      ...options,
+      headers,
+    });
+  }
+}
+
+export const api = ApiClient.getInstance();
+
+// Legacy exports for compatibility
+export const getAuthToken = () => api.getAuthToken();
+export const setAuthToken = (token: string) => api.setAuthToken(token);
+export const removeAuthToken = () => api.removeAuthToken();
+export const authenticatedFetch = (url: string, options?: RequestInit) => api.authenticatedFetch(url, options);
+export const API_BASE_URL = api.API_BASE_URL;

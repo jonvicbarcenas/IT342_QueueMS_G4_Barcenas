@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Authentication Service implementing Singleton pattern via Spring @Service annotation.
+ * This service handles user registration, login, and profile retrieval.
+ */
 @Service
 public class AuthService {
 
