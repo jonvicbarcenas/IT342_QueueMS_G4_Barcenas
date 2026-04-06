@@ -1,6 +1,7 @@
 package edu.cit.barcenas.queuems.service;
 
 import edu.cit.barcenas.queuems.model.ServiceRequest;
+import edu.cit.barcenas.queuems.pattern.strategy.QueueNumberStrategy;
 import edu.cit.barcenas.queuems.repository.ServiceRequestRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +12,11 @@ import java.util.concurrent.ExecutionException;
 public class ServiceRequestService {
 
     private final ServiceRequestRepository repository;
+    private final QueueNumberStrategy strategy;
 
-    public ServiceRequestService(ServiceRequestRepository repository) {
+    public ServiceRequestService(ServiceRequestRepository repository, QueueNumberStrategy strategy) {
         this.repository = repository;
+        this.strategy = strategy;
     }
 
     public ServiceRequestRepository getRepository() {
@@ -24,7 +27,7 @@ public class ServiceRequestService {
         ServiceRequest request = new ServiceRequest();
         request.setUserId(userId);
         request.setCounterId(counterId);
-        request.setQueueNumber(generateNextQueueNumber());
+        request.setQueueNumber(strategy.generateNext(repository));
         repository.save(request);
         return request;
     }
@@ -42,20 +45,6 @@ public class ServiceRequestService {
             throw new RuntimeException("Service request not found: " + requestId);
         } else {
             throw new RuntimeException("Cannot cancel request with status: " + request.getStatus());
-        }
-    }
-
-    private String generateNextQueueNumber() throws ExecutionException, InterruptedException {
-        String latestNumber = repository.findLatestQueueNumber();
-        if (latestNumber == null) {
-            return "Q001";
-        }
-        
-        try {
-            int currentNum = Integer.parseInt(latestNumber.substring(1));
-            return String.format("Q%03d", currentNum + 1);
-        } catch (Exception e) {
-            return "Q001";
         }
     }
 }
