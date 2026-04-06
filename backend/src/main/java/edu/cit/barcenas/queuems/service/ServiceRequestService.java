@@ -23,8 +23,8 @@ public class ServiceRequestService {
         this.observers = observers;
     }
 
-    public ServiceRequestRepository getRepository() {
-        return repository;
+    public ServiceRequest getRequestById(String id) throws ExecutionException, InterruptedException {
+        return repository.findById(id);
     }
 
     public ServiceRequest createRequest(String userId, String counterId) throws ExecutionException, InterruptedException {
@@ -38,14 +38,20 @@ public class ServiceRequestService {
         return repository.findByUserId(userId);
     }
 
-    public void cancelRequest(String requestId) throws ExecutionException, InterruptedException {
+    public void cancelRequest(String requestId, String userId) throws ExecutionException, InterruptedException {
         ServiceRequest request = repository.findById(requestId);
-        if (request != null && ServiceRequest.STATUS_PENDING.equals(request.getStatus())) {
+        if (request == null) {
+            throw new RuntimeException("Service request not found: " + requestId);
+        }
+        
+        if (!request.getUserId().equals(userId)) {
+            throw new RuntimeException("You can only cancel your own requests");
+        }
+
+        if (ServiceRequest.STATUS_PENDING.equals(request.getStatus())) {
             request.setStatus(ServiceRequest.STATUS_CANCELLED);
             repository.save(request);
             notifyObservers(request);
-        } else if (request == null) {
-            throw new RuntimeException("Service request not found: " + requestId);
         } else {
             throw new RuntimeException("Cannot cancel request with status: " + request.getStatus());
         }
