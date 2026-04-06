@@ -1,6 +1,7 @@
 package edu.cit.barcenas.queuems.service;
 
 import edu.cit.barcenas.queuems.model.ServiceRequest;
+import edu.cit.barcenas.queuems.pattern.factory.ServiceRequestFactory;
 import edu.cit.barcenas.queuems.pattern.strategy.QueueNumberStrategy;
 import edu.cit.barcenas.queuems.repository.ServiceRequestRepository;
 import org.springframework.stereotype.Service;
@@ -24,9 +25,7 @@ public class ServiceRequestService {
     }
 
     public ServiceRequest createRequest(String userId, String counterId) throws ExecutionException, InterruptedException {
-        ServiceRequest request = new ServiceRequest();
-        request.setUserId(userId);
-        request.setCounterId(counterId);
+        ServiceRequest request = ServiceRequestFactory.createRequest(userId, counterId, null);
         request.setQueueNumber(strategy.generateNext(repository));
         repository.save(request);
         return request;
