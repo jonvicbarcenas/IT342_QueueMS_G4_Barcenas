@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <color name="primary">#1D4ED8</color>
+    <color name="primary_dark">#1E40AF</color>
+    <color name="secondary">#475569</color>
+    <color name="success">#16A34A</color>
+    <color name="warning">#D97706</color>
+    <color name="error">#DC2626</color>
+    <color name="background">#F8FAFC</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="border">#E2E8F0</color>
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#64748B</color>
+
+    <!-- Status Colors -->
+    <color name="pending_bg">#FEF3C7</color>
+    <color name="pending_text">#D97706</color>
+    <color name="serving_bg">#EEF2FF</color>
+    <color name="serving_text">#4F46E5</color>
+    <color name="completed_bg">#DCFCE7</color>
+    <color name="completed_text">#16A34A</color>
+    <color name="cancelled_bg">#FEE2E2</color>
+    <color name="cancelled_text">#DC2626</color>
+</resources>
