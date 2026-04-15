@@ -2,10 +2,14 @@ package edu.cit.barcenas.queuems.config;
 
 import edu.cit.barcenas.queuems.model.Role;
 import edu.cit.barcenas.queuems.service.OAuth2SuccessHandler;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -18,10 +22,15 @@ public class SecurityConfig {
 
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final boolean googleOAuthEnabled;
 
-    public SecurityConfig(OAuth2SuccessHandler oAuth2SuccessHandler, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(
+            OAuth2SuccessHandler oAuth2SuccessHandler,
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            @Value("${app.oauth2.google.enabled:false}") boolean googleOAuthEnabled) {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.googleOAuthEnabled = googleOAuthEnabled;
     }
 
     @Bean
@@ -30,7 +39,12 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
+                .exceptionHandling(exception -> exception
+                        .defaultAuthenticationEntryPointFor(
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                                request -> request.getRequestURI().startsWith("/api/")))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Public endpoints
                         .requestMatchers("/api/auth/**", "/login/oauth2/**", "/oauth2/**").permitAll()
                         // Teller endpoints - require TELLER or SUPERADMIN role
@@ -39,11 +53,15 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole(Role.SUPERADMIN)
                         // User endpoints - require authentication
                         .requestMatchers("/api/requests/**").authenticated()
+                        .requestMatchers("/api/counters/**").authenticated()
                         // All other requests require authentication
-                        .anyRequest().authenticated())
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(oAuth2SuccessHandler)
-                );
+                        .anyRequest().authenticated());
+
+        if (googleOAuthEnabled) {
+            http.oauth2Login(oauth2 -> oauth2
+                    .successHandler(oAuth2SuccessHandler)
+            );
+        }
 
         // Add JWT Authentication Filter before UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

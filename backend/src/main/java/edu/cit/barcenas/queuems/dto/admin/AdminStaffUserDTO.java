@@ -1,10 +1,12 @@
-package edu.cit.barcenas.queuems.dto;
+package edu.cit.barcenas.queuems.dto.admin;
 
-public class RegisterRequestDTO {
+public class AdminStaffUserDTO {
     private String email;
     private String password;
     private String firstname;
     private String lastname;
+    private String role;
+    private String counterId;
 
     public String getEmail() {
         return email;
@@ -36,5 +38,21 @@ public class RegisterRequestDTO {
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getCounterId() {
+        return counterId;
+    }
+
+    public void setCounterId(String counterId) {
+        this.counterId = counterId;
     }
 }

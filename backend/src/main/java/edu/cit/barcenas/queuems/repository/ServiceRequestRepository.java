@@ -8,6 +8,7 @@ import com.google.cloud.firestore.QuerySnapshot;
 import edu.cit.barcenas.queuems.model.ServiceRequest;
 import org.springframework.stereotype.Repository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -44,12 +45,14 @@ public class ServiceRequestRepository {
     public List<ServiceRequest> findByUserId(String userId) throws ExecutionException, InterruptedException {
         QuerySnapshot querySnapshot = firestore.collection(COLLECTION_NAME)
                 .whereEqualTo("userId", userId)
-                .orderBy("createdAt", Query.Direction.DESCENDING)
                 .get()
                 .get();
         
         return querySnapshot.getDocuments().stream()
                 .map(doc -> doc.toObject(ServiceRequest.class))
+                .sorted(Comparator.comparing(
+                        ServiceRequest::getCreatedAt,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
                 .collect(Collectors.toList());
     }
 
@@ -71,12 +74,41 @@ public class ServiceRequestRepository {
         QuerySnapshot querySnapshot = firestore.collection(COLLECTION_NAME)
                 .whereEqualTo("counterId", counterId)
                 .whereEqualTo("status", status)
-                .orderBy("createdAt", Query.Direction.ASCENDING)
                 .get()
                 .get();
         
         return querySnapshot.getDocuments().stream()
                 .map(doc -> doc.toObject(ServiceRequest.class))
+                .sorted(Comparator.comparing(
+                        ServiceRequest::getCreatedAt,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .collect(Collectors.toList());
+    }
+
+    public List<ServiceRequest> findByCounterId(String counterId) throws ExecutionException, InterruptedException {
+        QuerySnapshot querySnapshot = firestore.collection(COLLECTION_NAME)
+                .whereEqualTo("counterId", counterId)
+                .get()
+                .get();
+
+        return querySnapshot.getDocuments().stream()
+                .map(doc -> doc.toObject(ServiceRequest.class))
+                .sorted(Comparator.comparing(
+                        ServiceRequest::getCreatedAt,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
+                .collect(Collectors.toList());
+    }
+
+    public List<ServiceRequest> findAll() throws ExecutionException, InterruptedException {
+        QuerySnapshot querySnapshot = firestore.collection(COLLECTION_NAME)
+                .get()
+                .get();
+
+        return querySnapshot.getDocuments().stream()
+                .map(doc -> doc.toObject(ServiceRequest.class))
+                .sorted(Comparator.comparing(
+                        ServiceRequest::getCreatedAt,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
                 .collect(Collectors.toList());
     }
 }

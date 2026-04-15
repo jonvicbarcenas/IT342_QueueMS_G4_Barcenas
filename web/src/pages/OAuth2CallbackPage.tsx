@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '@context';
+import { useAuth } from '@/context';
 
 const OAuth2CallbackPage = () => {
   const [searchParams] = useSearchParams();
@@ -21,7 +21,7 @@ const OAuth2CallbackPage = () => {
           setTimeout(() => {
             navigate('/dashboard', { replace: true });
           }, 100);
-        } catch (err) {
+        } catch {
           setError('Failed to authenticate. Please try again.');
           setTimeout(() => navigate('/login'), 3000);
         }
