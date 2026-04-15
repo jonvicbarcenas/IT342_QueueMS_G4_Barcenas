@@ -1,7 +1,6 @@
 package edu.cit.barcenas.queuems.service;
 
 import edu.cit.barcenas.queuems.model.User;
-import edu.cit.barcenas.queuems.repository.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,20 +11,17 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final UserRepository userRepository;
-    private final JwtService jwtService;
+    private final AuthService authService;
 
     @Value("${app.frontend.url}")
     private String frontendUrl;
 
-    public OAuth2SuccessHandler(UserRepository userRepository, JwtService jwtService) {
-        this.userRepository = userRepository;
-        this.jwtService = jwtService;
+    public OAuth2SuccessHandler(AuthService authService) {
+        this.authService = authService;
     }
 
     @Override
@@ -35,23 +31,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         
         try {
-            // Extract user information from OAuth2User
-            String email = oAuth2User.getAttribute("email");
-            String givenName = oAuth2User.getAttribute("given_name");
-            String familyName = oAuth2User.getAttribute("family_name");
-            
-            // Check if user exists
-            User user = userRepository.findByEmail(email);
-            
-            if (user == null) {
-                // Create new user
-                String uid = UUID.randomUUID().toString();
-                user = new User(uid, email, null, givenName, familyName, "USER");
-                userRepository.save(user);
-            }
-            
-            // Generate JWT token
-            String token = jwtService.generateToken(user.getUid(), user.getEmail(), user.getRole());
+            // Use AuthService as a Facade to handle the login/registration logic
+            String token = authService.handleOAuth2Login(oAuth2User);
             
             // Redirect to frontend with token
             String redirectUrl = String.format("%s/auth/callback?token=%s", frontendUrl, token);

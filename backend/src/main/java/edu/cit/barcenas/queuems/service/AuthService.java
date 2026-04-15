@@ -3,13 +3,20 @@ package edu.cit.barcenas.queuems.service;
 import edu.cit.barcenas.queuems.dto.LoginRequestDTO;
 import edu.cit.barcenas.queuems.dto.RegisterRequestDTO;
 import edu.cit.barcenas.queuems.model.User;
+import edu.cit.barcenas.queuems.pattern.adapter.UserAdapter;
 import edu.cit.barcenas.queuems.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Authentication Service implementing Singleton pattern via Spring @Service annotation.
+ * This service handles user registration, login, and profile retrieval.
+ * Act as a Facade for the auth subsystem.
+ */
 @Service
 public class AuthService {
 
@@ -57,6 +64,24 @@ public class AuthService {
             throw new RuntimeException("Invalid email or password");
         }
 
+        // Generate JWT token
+        return jwtService.generateToken(user.getUid(), user.getEmail(), user.getRole());
+    }
+
+    /**
+     * Process OAuth2 login/registration and return a backend JWT.
+     */
+    public String handleOAuth2Login(OAuth2User oAuth2User) throws Exception {
+        String email = oAuth2User.getAttribute("email");
+        User user = userRepository.findByEmail(email);
+        
+        if (user == null) {
+            // Create new user using Adapter pattern
+            user = UserAdapter.adapt(oAuth2User);
+            user.setUid(UUID.randomUUID().toString());
+            userRepository.save(user);
+        }
+        
         // Generate JWT token
         return jwtService.generateToken(user.getUid(), user.getEmail(), user.getRole());
     }

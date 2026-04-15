@@ -55,20 +55,14 @@ public class ServiceRequestController {
     public ResponseEntity<?> cancelRequest(@PathVariable String id, Authentication authentication) {
         try {
             String uid = (String) authentication.getPrincipal();
-            ServiceRequest request = service.getRepository().findById(id);
-            
-            if (request == null) {
-                return ResponseEntity.notFound().build();
-            }
-            
-            // Ensure the user owns the request or is an admin/teller (though plan only specified user cancel)
-            if (!request.getUserId().equals(uid)) {
-                return ResponseEntity.status(403).body("You can only cancel your own requests");
-            }
-
-            service.cancelRequest(id);
+            service.cancelRequest(id, uid);
             return ResponseEntity.ok("Request cancelled successfully");
         } catch (Exception e) {
+            if (e.getMessage().contains("not found")) {
+                return ResponseEntity.notFound().build();
+            } else if (e.getMessage().contains("only cancel your own")) {
+                return ResponseEntity.status(403).body(e.getMessage());
+            }
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

@@ -1,6 +1,9 @@
 package edu.cit.barcenas.queuems.service;
 
 import edu.cit.barcenas.queuems.model.ServiceRequest;
+import edu.cit.barcenas.queuems.pattern.factory.ServiceRequestFactory;
+import edu.cit.barcenas.queuems.pattern.observer.QueueStatusObserver;
+import edu.cit.barcenas.queuems.pattern.strategy.QueueNumberStrategy;
 import edu.cit.barcenas.queuems.repository.ServiceRequestRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,20 +14,22 @@ import java.util.concurrent.ExecutionException;
 public class ServiceRequestService {
 
     private final ServiceRequestRepository repository;
+    private final QueueNumberStrategy strategy;
+    private final List<QueueStatusObserver> observers;
 
-    public ServiceRequestService(ServiceRequestRepository repository) {
+    public ServiceRequestService(ServiceRequestRepository repository, QueueNumberStrategy strategy, List<QueueStatusObserver> observers) {
         this.repository = repository;
+        this.strategy = strategy;
+        this.observers = observers;
     }
 
-    public ServiceRequestRepository getRepository() {
-        return repository;
+    public ServiceRequest getRequestById(String id) throws ExecutionException, InterruptedException {
+        return repository.findById(id);
     }
 
     public ServiceRequest createRequest(String userId, String counterId) throws ExecutionException, InterruptedException {
-        ServiceRequest request = new ServiceRequest();
-        request.setUserId(userId);
-        request.setCounterId(counterId);
-        request.setQueueNumber(generateNextQueueNumber());
+        ServiceRequest request = ServiceRequestFactory.createRequest(userId, counterId, null);
+        request.setQueueNumber(strategy.generateNext(repository));
         repository.save(request);
         return request;
     }
@@ -33,29 +38,30 @@ public class ServiceRequestService {
         return repository.findByUserId(userId);
     }
 
-    public void cancelRequest(String requestId) throws ExecutionException, InterruptedException {
+    public void cancelRequest(String requestId, String userId) throws ExecutionException, InterruptedException {
         ServiceRequest request = repository.findById(requestId);
-        if (request != null && ServiceRequest.STATUS_PENDING.equals(request.getStatus())) {
+        if (request == null) {
+            throw new RuntimeException("Service request not found: " + requestId);
+        }
+        
+        if (!request.getUserId().equals(userId)) {
+            throw new RuntimeException("You can only cancel your own requests");
+        }
+
+        if (ServiceRequest.STATUS_PENDING.equals(request.getStatus())) {
             request.setStatus(ServiceRequest.STATUS_CANCELLED);
             repository.save(request);
-        } else if (request == null) {
-            throw new RuntimeException("Service request not found: " + requestId);
+            notifyObservers(request);
         } else {
             throw new RuntimeException("Cannot cancel request with status: " + request.getStatus());
         }
     }
 
-    private String generateNextQueueNumber() throws ExecutionException, InterruptedException {
-        String latestNumber = repository.findLatestQueueNumber();
-        if (latestNumber == null) {
-            return "Q001";
-        }
-        
-        try {
-            int currentNum = Integer.parseInt(latestNumber.substring(1));
-            return String.format("Q%03d", currentNum + 1);
-        } catch (Exception e) {
-            return "Q001";
-        }
+    /**
+     * Notifies all registered observers about a status change.
+     * @param request the request whose status has changed
+     */
+    private void notifyObservers(ServiceRequest request) {
+        observers.forEach(observer -> observer.onStatusChange(request));
     }
 }

@@ -1,17 +1,17 @@
 // Authentication API service
 import type { LoginRequest, RegisterRequest, AuthResponse, User } from '@types/auth';
-import { API_BASE_URL, authenticatedFetch } from './api';
+import { api } from './api';
 
 const AUTH_ENDPOINTS = {
-  LOGIN: `${API_BASE_URL}/api/auth/login`,
-  REGISTER: `${API_BASE_URL}/api/auth/register`,
-  GOOGLE_LOGIN: `${API_BASE_URL}/oauth2/authorization/google`,
-  ME: `${API_BASE_URL}/api/auth/me`,
+  LOGIN: `/api/auth/login`,
+  REGISTER: `/api/auth/register`,
+  GOOGLE_LOGIN: `/oauth2/authorization/google`,
+  ME: `/api/auth/me`,
 } as const;
 
 export const authService = {
   async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const response = await fetch(AUTH_ENDPOINTS.LOGIN, {
+    const response = await fetch(`${api.API_BASE_URL}${AUTH_ENDPOINTS.LOGIN}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ export const authService = {
   },
 
   async register(data: RegisterRequest): Promise<void> {
-    const response = await fetch(AUTH_ENDPOINTS.REGISTER, {
+    const response = await fetch(`${api.API_BASE_URL}${AUTH_ENDPOINTS.REGISTER}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export const authService = {
   },
 
   async getMe(): Promise<User> {
-    const response = await authenticatedFetch(AUTH_ENDPOINTS.ME);
+    const response = await api.authenticatedFetch(`${api.API_BASE_URL}${AUTH_ENDPOINTS.ME}`);
 
     if (!response.ok) {
       const error = await response.text();
@@ -55,12 +55,12 @@ export const authService = {
 
   // Initiate Google OAuth2 login by redirecting to backend OAuth2 endpoint
   initiateGoogleLogin(): void {
-    window.location.href = AUTH_ENDPOINTS.GOOGLE_LOGIN;
+    window.location.href = `${api.API_BASE_URL}${AUTH_ENDPOINTS.GOOGLE_LOGIN}`;
   },
 
   // Get OAuth2 login URL (alternative method if you want to open in popup)
   getGoogleLoginUrl(): string {
-    return AUTH_ENDPOINTS.GOOGLE_LOGIN;
+    return `${api.API_BASE_URL}${AUTH_ENDPOINTS.GOOGLE_LOGIN}`;
   },
 };
 
