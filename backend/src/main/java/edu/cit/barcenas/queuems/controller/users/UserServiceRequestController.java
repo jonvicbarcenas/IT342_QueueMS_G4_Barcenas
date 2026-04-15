@@ -1,5 +1,6 @@
-package edu.cit.barcenas.queuems.controller;
+package edu.cit.barcenas.queuems.controller.users;
 
+import edu.cit.barcenas.queuems.dto.CreateServiceRequestDTO;
 import edu.cit.barcenas.queuems.model.ServiceRequest;
 import edu.cit.barcenas.queuems.service.ServiceRequestService;
 import org.springframework.http.ResponseEntity;
@@ -8,34 +9,44 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/requests")
-public class ServiceRequestController {
+public class UserServiceRequestController {
 
     private final ServiceRequestService service;
 
-    public ServiceRequestController(ServiceRequestService service) {
+    public UserServiceRequestController(ServiceRequestService service) {
         this.service = service;
     }
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createRequest(@RequestBody Map<String, String> body, Authentication authentication) {
+    public ResponseEntity<?> createRequest(@RequestBody CreateServiceRequestDTO body, Authentication authentication) {
         try {
             String uid = (String) authentication.getPrincipal();
-            String counterId = body.get("counterId");
-            
-            if (counterId == null || counterId.isEmpty()) {
+
+            if (body == null || body.getCounterId() == null || body.getCounterId().trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("counterId is required");
             }
 
-            ServiceRequest request = service.createRequest(uid, counterId);
+            ServiceRequest request = service.createRequest(
+                    uid,
+                    body.getCounterId(),
+                    body.getServiceType(),
+                    body.getNotes());
             return ResponseEntity.status(201).body(request);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
+    }
+
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getRequests(Authentication authentication) {
+        return getMyRequests(authentication);
     }
 
     @GetMapping("/me")
@@ -50,13 +61,30 @@ public class ServiceRequestController {
         }
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getRequest(@PathVariable String id, Authentication authentication) {
+        try {
+            String uid = (String) authentication.getPrincipal();
+            ServiceRequest request = service.getUserRequestById(id, uid);
+            return ResponseEntity.ok(request);
+        } catch (Exception e) {
+            if (e.getMessage().contains("not found")) {
+                return ResponseEntity.notFound().build();
+            } else if (e.getMessage().contains("only view your own")) {
+                return ResponseEntity.status(403).body(e.getMessage());
+            }
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> cancelRequest(@PathVariable String id, Authentication authentication) {
         try {
             String uid = (String) authentication.getPrincipal();
-            service.cancelRequest(id, uid);
-            return ResponseEntity.ok("Request cancelled successfully");
+            ServiceRequest request = service.cancelRequest(id, uid);
+            return ResponseEntity.ok(request);
         } catch (Exception e) {
             if (e.getMessage().contains("not found")) {
                 return ResponseEntity.notFound().build();

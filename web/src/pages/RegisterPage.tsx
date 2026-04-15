@@ -1,7 +1,9 @@
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
+import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@context';
+import { useAuth } from '@/context';
 import { Button, Input } from '@components/common';
+import { authService } from '@services/authService';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -182,14 +184,12 @@ const RegisterPage = () => {
           </Button>
         </form>
 
-        {/* Divider */}
         <div className="flex items-center my-6">
           <div className="flex-1 border-t border-gray-300"></div>
           <span className="px-3 text-sm text-gray-500">or</span>
           <div className="flex-1 border-t border-gray-300"></div>
         </div>
 
-        {/* Google Sign In */}
         <Button
           variant="outline"
           onClick={handleGoogleSignIn}

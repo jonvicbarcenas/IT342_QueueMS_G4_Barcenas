@@ -7,7 +7,23 @@ public class ServiceRequestFactory {
         ServiceRequest request = new ServiceRequest();
         request.setUserId(userId);
         request.setCounterId(counterId);
-        // Add logic for 'type' if needed later (e.g. Regular vs Priority)
+        request.setServiceType(type);
+        return request;
+    }
+
+    public static ServiceRequest createRequest(
+            String userId,
+            String counterId,
+            String counterName,
+            String serviceType,
+            String assignedTellerId,
+            String assignedTellerName,
+            String notes) {
+        ServiceRequest request = createRequest(userId, counterId, serviceType);
+        request.setCounterName(counterName);
+        request.setAssignedTellerId(assignedTellerId);
+        request.setAssignedTellerName(assignedTellerName);
+        request.setNotes(notes);
         return request;
     }
 }

@@ -18,11 +18,13 @@ export interface AuthResponse {
 }
 
 export interface User {
-  id: string;
+  uid: string;
   email: string;
   firstname: string;
   lastname: string;
   role?: string;
+  counterId?: string;
+  counterName?: string;
 }
 
 export interface AuthState {

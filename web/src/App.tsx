@@ -1,7 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '@context';
+import { AuthProvider } from '@/context';
 import { ProtectedRoute } from '@components/common';
-import { LoginPage, RegisterPage, DashboardPage, OAuth2CallbackPage } from '@pages';
+import {
+  AdminDashboardPage,
+  DashboardRouterPage,
+  LoginPage,
+  OAuth2CallbackPage,
+  RegisterPage,
+  TellerDashboardPage,
+} from '@/pages';
 
 function App() {
   return (
@@ -15,7 +22,23 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <DashboardPage />
+                <DashboardRouterPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['SUPERADMIN']}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teller/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['TELLER', 'SUPERADMIN']}>
+                <TellerDashboardPage />
               </ProtectedRoute>
             }
           />
