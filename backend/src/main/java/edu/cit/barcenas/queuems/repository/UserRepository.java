@@ -7,7 +7,10 @@ import com.google.cloud.firestore.QuerySnapshot;
 import edu.cit.barcenas.queuems.model.User;
 import org.springframework.stereotype.Repository;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserRepository {
@@ -43,5 +46,30 @@ public class UserRepository {
         }
         
         return querySnapshot.getDocuments().get(0).toObject(User.class);
+    }
+
+    public List<User> findAll() throws ExecutionException, InterruptedException {
+        QuerySnapshot querySnapshot = firestore.collection("users").get().get();
+
+        return querySnapshot.getDocuments().stream()
+                .map(doc -> doc.toObject(User.class))
+                .sorted(Comparator.comparing(User::getEmail, String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toList());
+    }
+
+    public List<User> findByRole(String role) throws ExecutionException, InterruptedException {
+        QuerySnapshot querySnapshot = firestore.collection("users")
+                .whereEqualTo("role", role)
+                .get()
+                .get();
+
+        return querySnapshot.getDocuments().stream()
+                .map(doc -> doc.toObject(User.class))
+                .sorted(Comparator.comparing(User::getEmail, String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toList());
+    }
+
+    public void delete(String uid) throws ExecutionException, InterruptedException {
+        firestore.collection("users").document(uid).delete().get();
     }
 }

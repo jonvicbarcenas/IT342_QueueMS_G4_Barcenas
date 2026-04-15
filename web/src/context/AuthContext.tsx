@@ -1,5 +1,7 @@
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import type { User, AuthState, LoginRequest, RegisterRequest } from '@types/auth';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import type { ReactNode } from 'react';
+import type { User, AuthState, LoginRequest, RegisterRequest } from '@/types/auth';
 import { authService } from '@services/authService';
 import { setAuthToken, removeAuthToken, getAuthToken } from '@services/api';
 
@@ -22,6 +24,27 @@ const removeStoredUser = (): void => {
   localStorage.removeItem(USER_KEY);
 };
 
+const getInitialAuthState = (): AuthState => {
+  const token = getAuthToken();
+  const user = getStoredUser();
+
+  if (token && user) {
+    return {
+      user,
+      token,
+      isAuthenticated: true,
+      isLoading: false,
+    };
+  }
+
+  return {
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    isLoading: Boolean(token),
+  };
+};
+
 interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
@@ -33,12 +56,7 @@ interface AuthContextType extends AuthState {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    token: null,
-    isAuthenticated: false,
-    isLoading: true,
-  });
+  const [authState, setAuthState] = useState<AuthState>(getInitialAuthState);
 
   const logout = useCallback(() => {
     removeAuthToken();
@@ -76,43 +94,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Restore session on mount
   useEffect(() => {
     const token = getAuthToken();
-    const user = getStoredUser();
-
     if (token) {
-      // If we have a stored user, show it immediately but refresh from backend
-      if (user) {
-        setAuthState({
-          user,
-          token,
-          isAuthenticated: true,
-          isLoading: false,
-        });
+      const timer = window.setTimeout(() => {
         loadUser();
-      } else {
-        loadUser();
-      }
-    } else {
-      setAuthState(prev => ({ ...prev, isLoading: false }));
+      }, 0);
+
+      return () => window.clearTimeout(timer);
     }
   }, [loadUser]);
 
   const login = useCallback(async (credentials: LoginRequest) => {
-    try {
-      const response = await authService.login(credentials);
-      setAuthToken(response.backendToken);
-      await loadUser();
-    } catch (error) {
-      throw error;
-    }
+    const response = await authService.login(credentials);
+    setAuthToken(response.backendToken);
+    await loadUser();
   }, [loadUser]);
 
   const register = useCallback(async (data: RegisterRequest) => {
-    try {
-      await authService.register(data);
-      await login({ email: data.email, password: data.password });
-    } catch (error) {
-      throw error;
-    }
+    await authService.register(data);
+    await login({ email: data.email, password: data.password });
   }, [login]);
 
   const loginWithToken = useCallback(async (token: string) => {
