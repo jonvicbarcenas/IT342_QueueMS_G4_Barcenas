@@ -2,11 +2,13 @@ package edu.cit.barcenas.queuems.service;
 
 import edu.cit.barcenas.queuems.model.Counter;
 import edu.cit.barcenas.queuems.model.ServiceRequest;
+import edu.cit.barcenas.queuems.model.User;
 import edu.cit.barcenas.queuems.pattern.factory.ServiceRequestFactory;
 import edu.cit.barcenas.queuems.pattern.observer.QueueStatusObserver;
 import edu.cit.barcenas.queuems.pattern.strategy.QueueNumberStrategy;
 import edu.cit.barcenas.queuems.repository.CounterRepository;
 import edu.cit.barcenas.queuems.repository.ServiceRequestRepository;
+import edu.cit.barcenas.queuems.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,16 +21,31 @@ public class ServiceRequestService {
     private final CounterRepository counterRepository;
     private final QueueNumberStrategy strategy;
     private final List<QueueStatusObserver> observers;
+    private final HolidayService holidayService;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final FcmService fcmService;
+    private final FileStorageService fileStorageService;
 
     public ServiceRequestService(
             ServiceRequestRepository repository,
             CounterRepository counterRepository,
             QueueNumberStrategy strategy,
-            List<QueueStatusObserver> observers) {
+            List<QueueStatusObserver> observers,
+            HolidayService holidayService,
+            UserRepository userRepository,
+            EmailService emailService,
+            FcmService fcmService,
+            FileStorageService fileStorageService) {
         this.repository = repository;
         this.counterRepository = counterRepository;
         this.strategy = strategy;
         this.observers = observers;
+        this.holidayService = holidayService;
+        this.userRepository = userRepository;
+        this.emailService = emailService;
+        this.fcmService = fcmService;
+        this.fileStorageService = fileStorageService;
     }
 
     public ServiceRequest getRequestById(String id) throws ExecutionException, InterruptedException {
@@ -50,6 +67,12 @@ public class ServiceRequestService {
 
     public ServiceRequest createRequest(String userId, String counterId, String serviceType, String notes)
             throws ExecutionException, InterruptedException {
+
+        // Check if today is a public holiday
+        if (holidayService.isPublicHoliday(java.time.LocalDate.now())) {
+            throw new IllegalArgumentException("Today is a public holiday. Bookings are not available.");
+        }
+
         String normalizedCounterId = normalizeRequired(counterId, "counterId");
 
         Counter counter = counterRepository.findById(normalizedCounterId);
@@ -70,6 +93,8 @@ public class ServiceRequestService {
                 normalizeOptional(notes));
         request.setQueueNumber(strategy.generateNext(repository));
         repository.save(request);
+        sendRequestConfirmation(request);
+        notifyObservers(request);
         return request;
     }
 
@@ -104,6 +129,48 @@ public class ServiceRequestService {
      */
     private void notifyObservers(ServiceRequest request) {
         observers.forEach(observer -> observer.onStatusChange(request));
+    }
+
+    public ServiceRequest attachSupportingDocument(
+            String requestId,
+            String userId,
+            org.springframework.web.multipart.MultipartFile file) throws Exception {
+        ServiceRequest request = getUserRequestById(requestId, userId);
+        if (!ServiceRequest.STATUS_PENDING.equals(request.getStatus())) {
+            throw new IllegalArgumentException("Attachments can only be added to pending requests");
+        }
+
+        FileStorageService.StoredFile storedFile = fileStorageService.store(file);
+        request.setAttachmentOriginalName(storedFile.originalName());
+        request.setAttachmentStoredName(storedFile.storedName());
+        request.setAttachmentContentType(storedFile.contentType());
+        request.setAttachmentUrl(storedFile.secureUrl());
+        request.setUpdatedAt(new java.util.Date());
+        repository.save(request);
+        return request;
+    }
+
+    private void sendRequestConfirmation(ServiceRequest request) {
+        try {
+            User user = userRepository.findByUid(request.getUserId());
+            if (user == null) {
+                return;
+            }
+
+            String subject = "QueueMS: Queue Request Confirmed";
+            String message = String.format(
+                    "Hello %s, your queue request %s for %s at %s has been created and is currently %s.",
+                    user.getFirstname() != null ? user.getFirstname() : user.getEmail(),
+                    request.getQueueNumber(),
+                    request.getServiceType(),
+                    request.getCounterName(),
+                    request.getStatus());
+
+            emailService.sendSimpleMessage(user.getEmail(), subject, message);
+            fcmService.sendNotification(user.getFcmToken(), subject, message);
+        } catch (Exception e) {
+            System.err.println("Failed to send request confirmation: " + e.getMessage());
+        }
     }
 
     private String normalizeRequired(String value, String fieldName) {

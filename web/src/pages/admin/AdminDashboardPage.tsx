@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useAuth } from '@/context';
-import { Button, Input } from '@components/common';
+import { AccountMenu, Button, Input } from '@components/common';
 import { adminService } from '@services/admin/adminService';
+import { webSocketService } from '@services/websocketService';
 import type {
   AdminCounter,
   AdminCounterPayload,
@@ -21,8 +22,6 @@ const STATUS_STYLES: Record<string, string> = {
   COMPLETED: 'bg-green-50 text-green-700 border-green-200',
   CANCELLED: 'bg-red-50 text-red-700 border-red-200',
 };
-
-const AUTO_REFRESH_INTERVAL_MS = 8000;
 
 const emptyCounterForm: AdminCounterPayload = {
   name: '',
@@ -66,13 +65,14 @@ const countRequests = (requests: AdminServiceRequest[], status: string): number 
 );
 
 const AdminDashboardPage = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [counters, setCounters] = useState<AdminCounter[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [requests, setRequests] = useState<AdminServiceRequest[]>([]);
   const [counterForm, setCounterForm] = useState<AdminCounterPayload>(emptyCounterForm);
   const [staffForm, setStaffForm] = useState<AdminStaffUserPayload>(emptyStaffForm);
   const [editingCounterId, setEditingCounterId] = useState<string | null>(null);
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSavingCounter, setIsSavingCounter] = useState(false);
   const [isSavingStaff, setIsSavingStaff] = useState(false);
@@ -115,23 +115,47 @@ const AdminDashboardPage = () => {
 
   useEffect(() => {
     loadAdminData();
-  }, [loadAdminData]);
 
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      if (document.hidden || isSavingCounter || isSavingStaff) {
-        return;
+    // Connect to WebSocket for real-time updates
+    const setupWebSocket = async () => {
+      try {
+        await webSocketService.connect();
+        webSocketService.subscribe('/topic/queue', (updatedRequest: AdminServiceRequest) => {
+          setRequests(currentRequests => {
+            const index = currentRequests.findIndex(r => r.id === updatedRequest.id);
+            if (index !== -1) {
+              const newRequests = [...currentRequests];
+              newRequests[index] = updatedRequest;
+              return newRequests;
+            } else {
+              // Only add if it doesn't exist (e.g., new request)
+              return [updatedRequest, ...currentRequests];
+            }
+          });
+
+          // Also refresh counters in case a status change affected them
+          loadAdminData(true);
+        });
+      } catch (error) {
+        console.error('WebSocket connection failed:', error);
       }
+    };
 
-      loadAdminData(true);
-    }, AUTO_REFRESH_INTERVAL_MS);
+    setupWebSocket();
 
-    return () => window.clearInterval(intervalId);
-  }, [isSavingCounter, isSavingStaff, loadAdminData]);
+    return () => {
+      webSocketService.disconnect();
+    };
+  }, [loadAdminData]);
 
   const resetCounterForm = () => {
     setCounterForm(emptyCounterForm);
     setEditingCounterId(null);
+  };
+
+  const resetStaffForm = () => {
+    setStaffForm(emptyStaffForm);
+    setEditingUserId(null);
   };
 
   const handleCounterSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -210,21 +234,71 @@ const AdminDashboardPage = () => {
     try {
       const payload: AdminStaffUserPayload = {
         email: staffForm.email.trim(),
-        password: staffForm.password,
+        ...(staffForm.password ? { password: staffForm.password } : {}),
         firstname: staffForm.firstname.trim(),
         lastname: staffForm.lastname.trim(),
         role: staffForm.role,
         counterId: staffForm.role === 'TELLER' && staffForm.counterId ? staffForm.counterId : undefined,
       };
-      const createdUser = await adminService.createStaffUser(payload);
-      setUsers(currentUsers => [...currentUsers, createdUser]);
-      setStaffForm(emptyStaffForm);
-      setSuccessMessage(`${fullName(createdUser)} was created.`);
+
+      if (editingUserId) {
+        const updatedUser = await adminService.updateUser(editingUserId, payload);
+        setUsers(currentUsers => currentUsers.map(currentUser => (
+          currentUser.uid === updatedUser.uid ? updatedUser : currentUser
+        )));
+        setSuccessMessage(`${fullName(updatedUser)} was updated.`);
+      } else {
+        if (!staffForm.password) {
+          throw new Error('Temporary password is required');
+        }
+
+        const createdUser = await adminService.createStaffUser(payload);
+        setUsers(currentUsers => [...currentUsers, createdUser]);
+        setSuccessMessage(`${fullName(createdUser)} was created.`);
+      }
+
+      resetStaffForm();
       await loadAdminData();
     } catch (error) {
-      setPageError(error instanceof Error ? error.message : 'Unable to create staff user.');
+      setPageError(error instanceof Error ? error.message : 'Unable to save staff user.');
     } finally {
       setIsSavingStaff(false);
+    }
+  };
+
+  const handleEditUser = (selectedUser: AdminUser) => {
+    setStaffForm({
+      email: selectedUser.email,
+      password: '',
+      firstname: selectedUser.firstname ?? '',
+      lastname: selectedUser.lastname ?? '',
+      role: selectedUser.role,
+      counterId: selectedUser.counterId ?? '',
+    });
+    setEditingUserId(selectedUser.uid);
+    setSuccessMessage('');
+    setPageError('');
+  };
+
+  const handleDeleteUser = async (selectedUser: AdminUser) => {
+    const shouldDelete = window.confirm(`Delete ${fullName(selectedUser)}?`);
+    if (!shouldDelete) {
+      return;
+    }
+
+    setPageError('');
+    setSuccessMessage('');
+
+    try {
+      await adminService.deleteUser(selectedUser.uid);
+      setUsers(currentUsers => currentUsers.filter(currentUser => currentUser.uid !== selectedUser.uid));
+      setSuccessMessage(`${fullName(selectedUser)} was deleted.`);
+      if (editingUserId === selectedUser.uid) {
+        resetStaffForm();
+      }
+      await loadAdminData();
+    } catch (error) {
+      setPageError(error instanceof Error ? error.message : 'Unable to delete user.');
     }
   };
 
@@ -250,12 +324,7 @@ const AdminDashboardPage = () => {
             <p className="text-sm font-semibold text-blue-700">QueueMS Admin</p>
             <h1 className="text-lg font-bold">Superadmin Dashboard</h1>
           </div>
-          <button
-            onClick={logout}
-            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
-          >
-            Logout
-          </button>
+          <AccountMenu />
         </div>
       </nav>
 
@@ -439,7 +508,7 @@ const AdminDashboardPage = () => {
 
           <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5">
-              <h2 className="text-xl font-bold">Create Staff Account</h2>
+              <h2 className="text-xl font-bold">{editingUserId ? 'Edit User Account' : 'Create Staff Account'}</h2>
               <p className="mt-1 text-sm text-slate-600">
                 Tellers can be assigned to counters from this form or from counter editing.
               </p>
@@ -468,12 +537,13 @@ const AdminDashboardPage = () => {
                 required
               />
               <Input
-                label="Temporary Password"
+                label={editingUserId ? 'New Password' : 'Temporary Password'}
                 type="password"
                 value={staffForm.password}
                 onChange={event => updateStaffForm('password', event.target.value)}
                 minLength={6}
-                required
+                placeholder={editingUserId ? 'Leave blank to keep current password' : undefined}
+                required={!editingUserId}
               />
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
@@ -486,6 +556,7 @@ const AdminDashboardPage = () => {
                     onChange={event => updateStaffForm('role', event.target.value)}
                     className="w-full rounded-md border border-slate-300 bg-white px-4 py-2 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600"
                   >
+                    {editingUserId && <option value="USER">User</option>}
                     <option value="TELLER">Teller</option>
                     <option value="SUPERADMIN">Superadmin</option>
                   </select>
@@ -510,9 +581,20 @@ const AdminDashboardPage = () => {
                   </select>
                 </div>
               </div>
-              <Button type="submit" isLoading={isSavingStaff} className="bg-blue-700 hover:bg-blue-800">
-                Create Staff Account
-              </Button>
+              <div className="flex gap-3">
+                <Button type="submit" isLoading={isSavingStaff} className="bg-blue-700 hover:bg-blue-800">
+                  {editingUserId ? 'Save User' : 'Create Staff Account'}
+                </Button>
+                {editingUserId && (
+                  <button
+                    type="button"
+                    onClick={resetStaffForm}
+                    className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
             </form>
 
             <div className="mt-6 overflow-x-auto">
@@ -522,6 +604,7 @@ const AdminDashboardPage = () => {
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">User</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Role</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Counter</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-slate-500">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -533,11 +616,27 @@ const AdminDashboardPage = () => {
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-700">{currentUser.role as AdminRole}</td>
                       <td className="px-4 py-3 text-sm text-slate-700">{currentUser.counterName ?? 'None'}</td>
+                      <td className="px-4 py-3 text-right text-sm">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => handleEditUser(currentUser)}
+                            className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(currentUser)}
+                            className="rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                   {users.length === 0 && (
                     <tr>
-                      <td colSpan={3} className="px-4 py-8 text-center text-sm text-slate-500">
+                      <td colSpan={4} className="px-4 py-8 text-center text-sm text-slate-500">
                         No users found.
                       </td>
                     </tr>

@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
-import type { User, AuthState, LoginRequest, RegisterRequest } from '@/types/auth';
+import type { User, AuthState, LoginRequest, RegisterRequest, UpdateProfileRequest } from '@/types/auth';
 import { authService } from '@services/authService';
 import { setAuthToken, removeAuthToken, getAuthToken } from '@services/api';
 
@@ -49,6 +49,7 @@ interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
   loginWithToken: (token: string) => Promise<void>;
+  updateProfile: (data: UpdateProfileRequest) => Promise<void>;
   logout: () => void;
   loadUser: () => Promise<void>;
 }
@@ -119,8 +120,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await loadUser();
   }, [loadUser]);
 
+  const updateProfile = useCallback(async (data: UpdateProfileRequest) => {
+    const token = getAuthToken();
+    const user = await authService.updateProfile(data);
+    setStoredUser(user);
+    setAuthState({
+      user,
+      token,
+      isAuthenticated: Boolean(token),
+      isLoading: false,
+    });
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ ...authState, login, register, loginWithToken, logout, loadUser }}>
+    <AuthContext.Provider value={{ ...authState, login, register, loginWithToken, updateProfile, logout, loadUser }}>
       {children}
     </AuthContext.Provider>
   );

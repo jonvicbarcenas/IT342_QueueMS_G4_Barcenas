@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/context';
+import { AccountMenu } from '@components/common';
 import { tellerService } from '@services/teller/tellerService';
+import { webSocketService } from '@services/websocketService';
 import type { TellerCounter, TellerRequestStatus, TellerServiceRequest } from '@/types/teller/teller';
 
 const STATUS_STYLES: Record<string, string> = {
@@ -11,8 +13,6 @@ const STATUS_STYLES: Record<string, string> = {
   COMPLETED: 'bg-green-50 text-green-700 border-green-200',
   CANCELLED: 'bg-red-50 text-red-700 border-red-200',
 };
-
-const AUTO_REFRESH_INTERVAL_MS = 5000;
 
 const formatDate = (value: string): string => {
   const date = new Date(value);
@@ -34,7 +34,7 @@ const countByStatus = (requests: TellerServiceRequest[], status: TellerRequestSt
 );
 
 const TellerDashboardPage = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [counter, setCounter] = useState<TellerCounter | null>(null);
   const [requests, setRequests] = useState<TellerServiceRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -80,16 +80,40 @@ const TellerDashboardPage = () => {
   }, [loadTellerData]);
 
   useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      if (document.hidden || isUpdatingCounter || isServingNext || updatingRequestId) {
-        return;
+    // Only subscribe if we have counter data
+    if (!counter?.id) return;
+
+    const setupWebSocket = async () => {
+      try {
+        await webSocketService.connect();
+        webSocketService.subscribe('/topic/queue', (updatedRequest: TellerServiceRequest) => {
+          // Only update if it belongs to this counter
+          if (updatedRequest.counterId === counter.id) {
+            setRequests(currentRequests => {
+              const index = currentRequests.findIndex(r => r.id === updatedRequest.id);
+              if (index !== -1) {
+                const newRequests = [...currentRequests];
+                newRequests[index] = updatedRequest;
+                return newRequests;
+              } else if (updatedRequest.status === 'PENDING') {
+                // New pending request for this counter
+                return [updatedRequest, ...currentRequests];
+              }
+              return currentRequests;
+            });
+          }
+        });
+      } catch (error) {
+        console.error('WebSocket connection failed:', error);
       }
+    };
 
-      loadTellerData(true);
-    }, AUTO_REFRESH_INTERVAL_MS);
+    setupWebSocket();
 
-    return () => window.clearInterval(intervalId);
-  }, [isServingNext, isUpdatingCounter, loadTellerData, updatingRequestId]);
+    return () => {
+      webSocketService.disconnect();
+    };
+  }, [counter?.id]);
 
   const replaceRequest = (updatedRequest: TellerServiceRequest) => {
     setRequests(currentRequests => currentRequests.map(request => (
@@ -174,12 +198,7 @@ const TellerDashboardPage = () => {
             <p className="text-sm font-semibold text-blue-700">QueueMS Teller</p>
             <h1 className="text-lg font-bold">Counter Queue Dashboard</h1>
           </div>
-          <button
-            onClick={logout}
-            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
-          >
-            Logout
-          </button>
+          <AccountMenu />
         </div>
       </nav>
 

@@ -33,10 +33,10 @@ export interface AdminUser {
 
 export interface AdminStaffUserPayload {
   email: string;
-  password: string;
+  password?: string;
   firstname: string;
   lastname: string;
-  role: 'TELLER' | 'SUPERADMIN';
+  role: AdminRole;
   counterId?: string;
 }
 

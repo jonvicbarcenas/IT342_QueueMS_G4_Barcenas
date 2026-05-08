@@ -1,11 +1,11 @@
 // Authentication API service
-import type { LoginRequest, RegisterRequest, AuthResponse, User } from '@/types/auth';
+import type { LoginRequest, RegisterRequest, UpdateProfileRequest, AuthResponse, User } from '@/types/auth';
 import { api } from './api';
 
 const AUTH_ENDPOINTS = {
   LOGIN: `/api/auth/login`,
   REGISTER: `/api/auth/register`,
-  GOOGLE_LOGIN: `/oauth2/authorization/google`,
+  GOOGLE_LOGIN: `/api/auth/google/login`,
   ME: `/api/auth/me`,
 } as const;
 
@@ -53,14 +53,42 @@ export const authService = {
     return response.json();
   },
 
-  // Initiate Google OAuth2 login by redirecting to backend OAuth2 endpoint
-  initiateGoogleLogin(): void {
-    window.location.href = `${api.API_BASE_URL}${AUTH_ENDPOINTS.GOOGLE_LOGIN}`;
+  async updateProfile(data: UpdateProfileRequest): Promise<User> {
+    const response = await api.authenticatedFetch(`${api.API_BASE_URL}${AUTH_ENDPOINTS.ME}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(error || 'Failed to update profile');
+    }
+
+    return response.json();
   },
 
-  // Get OAuth2 login URL (alternative method if you want to open in popup)
-  getGoogleLoginUrl(): string {
-    return `${api.API_BASE_URL}${AUTH_ENDPOINTS.GOOGLE_LOGIN}`;
+  async getGoogleLoginUrl(): Promise<string> {
+    const response = await fetch(`${api.API_BASE_URL}${AUTH_ENDPOINTS.GOOGLE_LOGIN}`);
+
+    if (!response.ok) {
+      const contentType = response.headers.get('content-type');
+      if (contentType?.includes('application/json')) {
+        const error = await response.json();
+        throw new Error(error.message || 'Google login is not available');
+      }
+
+      const error = await response.text();
+      throw new Error(error || 'Google login is not available');
+    }
+
+    const data = await response.json() as { redirectUrl: string };
+    return data.redirectUrl.startsWith('http')
+      ? data.redirectUrl
+      : `${api.API_BASE_URL}${data.redirectUrl}`;
+  },
+
+  async initiateGoogleLogin(): Promise<void> {
+    window.location.href = await this.getGoogleLoginUrl();
   },
 };
 

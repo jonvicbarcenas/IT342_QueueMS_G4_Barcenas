@@ -2,8 +2,11 @@ package edu.cit.barcenas.queuems.service;
 
 import edu.cit.barcenas.queuems.dto.LoginRequestDTO;
 import edu.cit.barcenas.queuems.dto.RegisterRequestDTO;
+import edu.cit.barcenas.queuems.dto.UpdateProfileDTO;
+import edu.cit.barcenas.queuems.model.Counter;
 import edu.cit.barcenas.queuems.model.User;
 import edu.cit.barcenas.queuems.pattern.adapter.UserAdapter;
+import edu.cit.barcenas.queuems.repository.CounterRepository;
 import edu.cit.barcenas.queuems.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -23,11 +26,20 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final CounterRepository counterRepository;
 
-    public AuthService(UserRepository userRepository, JwtService jwtService, PasswordEncoder passwordEncoder) {
+    public AuthService(
+            UserRepository userRepository,
+            JwtService jwtService,
+            PasswordEncoder passwordEncoder,
+            EmailService emailService,
+            CounterRepository counterRepository) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
+        this.counterRepository = counterRepository;
     }
 
     public void register(RegisterRequestDTO dto) throws Exception {
@@ -46,6 +58,7 @@ public class AuthService {
         // Create and save user
         User user = new User(uid, dto.getEmail(), hashedPassword, dto.getFirstname(), dto.getLastname(), "USER");
         userRepository.save(user);
+        sendWelcomeEmail(user);
     }
 
     /**
@@ -80,6 +93,7 @@ public class AuthService {
             user = UserAdapter.adapt(oAuth2User);
             user.setUid(UUID.randomUUID().toString());
             userRepository.save(user);
+            sendWelcomeEmail(user);
         }
         
         // Generate JWT token
@@ -95,5 +109,61 @@ public class AuthService {
      */
     public User getUserById(String uid) throws ExecutionException, InterruptedException {
         return userRepository.findByUid(uid);
+    }
+
+    public User updateProfile(String uid, UpdateProfileDTO dto) throws ExecutionException, InterruptedException {
+        if (dto == null) {
+            throw new IllegalArgumentException("Profile details are required");
+        }
+
+        User user = userRepository.findByUid(uid);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        String firstname = normalizeRequired(dto.getFirstname(), "firstname");
+        String lastname = normalizeRequired(dto.getLastname(), "lastname");
+        user.setFirstname(firstname);
+        user.setLastname(lastname);
+        userRepository.save(user);
+        syncAssignedCounterName(user);
+        return user;
+    }
+
+    public void updateFcmToken(String uid, String fcmToken) throws ExecutionException, InterruptedException {
+        User user = userRepository.findByUid(uid);
+        if (user != null) {
+            user.setFcmToken(fcmToken);
+            userRepository.save(user);
+        }
+    }
+
+    private void sendWelcomeEmail(User user) {
+        emailService.sendSimpleMessage(
+                user.getEmail(),
+                "Welcome to QueueMS",
+                String.format("Hello %s, your QueueMS account has been created successfully.",
+                        user.getFirstname() != null ? user.getFirstname() : user.getEmail()));
+    }
+
+    private void syncAssignedCounterName(User user) throws ExecutionException, InterruptedException {
+        if (user.getCounterId() == null) {
+            return;
+        }
+
+        Counter counter = counterRepository.findById(user.getCounterId());
+        if (counter == null || !user.getUid().equals(counter.getAssignedTellerId())) {
+            return;
+        }
+
+        counter.setAssignedTellerName(user.getFirstname() + " " + user.getLastname());
+        counterRepository.save(counter);
+    }
+
+    private String normalizeRequired(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException(fieldName + " is required");
+        }
+        return value.trim();
     }
 }

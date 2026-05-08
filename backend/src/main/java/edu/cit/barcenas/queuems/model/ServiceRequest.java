@@ -11,6 +11,10 @@ public class ServiceRequest {
     private String assignedTellerId;
     private String assignedTellerName;
     private String notes;
+    private String attachmentOriginalName;
+    private String attachmentStoredName;
+    private String attachmentContentType;
+    private String attachmentUrl;
     private String status = STATUS_PENDING;
     private String queueNumber;
     private Date createdAt = new Date();
@@ -28,6 +32,10 @@ public class ServiceRequest {
             String assignedTellerId,
             String assignedTellerName,
             String notes,
+            String attachmentOriginalName,
+            String attachmentStoredName,
+            String attachmentContentType,
+            String attachmentUrl,
             String status,
             String queueNumber,
             Date createdAt,
@@ -40,6 +48,10 @@ public class ServiceRequest {
         this.assignedTellerId = assignedTellerId;
         this.assignedTellerName = assignedTellerName;
         this.notes = notes;
+        this.attachmentOriginalName = attachmentOriginalName;
+        this.attachmentStoredName = attachmentStoredName;
+        this.attachmentContentType = attachmentContentType;
+        this.attachmentUrl = attachmentUrl;
         this.status = status;
         this.queueNumber = queueNumber;
         this.createdAt = createdAt;
@@ -126,6 +138,38 @@ public class ServiceRequest {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public String getAttachmentOriginalName() {
+        return attachmentOriginalName;
+    }
+
+    public void setAttachmentOriginalName(String attachmentOriginalName) {
+        this.attachmentOriginalName = attachmentOriginalName;
+    }
+
+    public String getAttachmentStoredName() {
+        return attachmentStoredName;
+    }
+
+    public void setAttachmentStoredName(String attachmentStoredName) {
+        this.attachmentStoredName = attachmentStoredName;
+    }
+
+    public String getAttachmentContentType() {
+        return attachmentContentType;
+    }
+
+    public void setAttachmentContentType(String attachmentContentType) {
+        this.attachmentContentType = attachmentContentType;
+    }
+
+    public String getAttachmentUrl() {
+        return attachmentUrl;
+    }
+
+    public void setAttachmentUrl(String attachmentUrl) {
+        this.attachmentUrl = attachmentUrl;
     }
 
     public String getStatus() {

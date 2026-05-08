@@ -8,9 +8,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -22,15 +26,21 @@ public class SecurityConfig {
 
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final boolean googleOAuthEnabled;
+    private final String googleOAuthEnabled;
+    private final String googleClientId;
+    private final String googleClientSecret;
 
     public SecurityConfig(
             OAuth2SuccessHandler oAuth2SuccessHandler,
             JwtAuthenticationFilter jwtAuthenticationFilter,
-            @Value("${app.oauth2.google.enabled:false}") boolean googleOAuthEnabled) {
+            @Value("${app.oauth2.google.enabled:auto}") String googleOAuthEnabled,
+            @Value("${GOOGLE_CLIENT_ID:}") String googleClientId,
+            @Value("${GOOGLE_CLIENT_SECRET:}") String googleClientSecret) {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.googleOAuthEnabled = googleOAuthEnabled;
+        this.googleClientId = googleClientId;
+        this.googleClientSecret = googleClientSecret;
     }
 
     @Bean
@@ -46,7 +56,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Public endpoints
-                        .requestMatchers("/api/auth/**", "/login/oauth2/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/login/oauth2/**", "/oauth2/**", "/ws/**").permitAll()
                         // Teller endpoints - require TELLER or SUPERADMIN role
                         .requestMatchers("/api/teller/**").hasAnyRole(Role.TELLER, Role.SUPERADMIN)
                         // Admin endpoints - require SUPERADMIN role
@@ -57,8 +67,9 @@ public class SecurityConfig {
                         // All other requests require authentication
                         .anyRequest().authenticated());
 
-        if (googleOAuthEnabled) {
+        if (isGoogleOAuthEnabled()) {
             http.oauth2Login(oauth2 -> oauth2
+                    .clientRegistrationRepository(googleClientRegistrationRepository())
                     .successHandler(oAuth2SuccessHandler)
             );
         }
@@ -67,6 +78,36 @@ public class SecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    private boolean isGoogleOAuthEnabled() {
+        if ("true".equalsIgnoreCase(googleOAuthEnabled)) {
+            return true;
+        }
+
+        if ("false".equalsIgnoreCase(googleOAuthEnabled)) {
+            return false;
+        }
+
+        return hasGoogleOAuthCredentials();
+    }
+
+    private boolean hasGoogleOAuthCredentials() {
+        return StringUtils.hasText(googleClientId) && StringUtils.hasText(googleClientSecret);
+    }
+
+    private ClientRegistrationRepository googleClientRegistrationRepository() {
+        if (!hasGoogleOAuthCredentials()) {
+            throw new IllegalStateException(
+                    "Google OAuth is enabled, but GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET is missing.");
+        }
+
+        return new InMemoryClientRegistrationRepository(
+                CommonOAuth2Provider.GOOGLE.getBuilder("google")
+                        .clientId(googleClientId)
+                        .clientSecret(googleClientSecret)
+                        .scope("openid", "profile", "email")
+                        .build());
     }
 
     @Bean

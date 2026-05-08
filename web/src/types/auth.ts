@@ -12,6 +12,11 @@ export interface RegisterRequest {
   lastname: string;
 }
 
+export interface UpdateProfileRequest {
+  firstname: string;
+  lastname: string;
+}
+
 export interface AuthResponse {
   backendToken: string;
   expiresInMs: number;
