@@ -48,6 +48,11 @@ public class TellerService {
         return serviceRequestRepository.findByCounterId(counter.getId());
     }
 
+    public ServiceRequest getAssignedRequestById(String tellerUid, String requestId)
+            throws ExecutionException, InterruptedException {
+        return getAssignedRequest(tellerUid, requestId);
+    }
+
     public ServiceRequest serveNextRequest(String tellerUid) throws ExecutionException, InterruptedException {
         Counter counter = getAssignedCounter(tellerUid);
         List<ServiceRequest> pendingRequests = serviceRequestRepository.findByCounterIdAndStatus(

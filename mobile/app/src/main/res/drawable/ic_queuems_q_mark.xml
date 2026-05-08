@@ -1,23 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
+    android:width="32dp"
+    android:height="32dp"
     android:viewportWidth="512"
     android:viewportHeight="512">
-    <!-- White Card Background -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:strokeColor="#E8E5DC"
-        android:strokeWidth="8"
-        android:pathData="M170,82 h172 a88,88 0 0,1 88,88 v172 a88,88 0 0,1 -88,88 h-172 a88,88 0 0,1 -88,-88 v-172 a88,88 0 0,1 88,-88 z" />
-    
-    <!-- Inner Pattern Rect -->
-    <path
-        android:fillColor="#F4F3EE"
-        android:strokeColor="#DCD8CF"
-        android:strokeWidth="4"
-        android:pathData="M178,110 h156 a68,68 0 0,1 68,68 v156 a68,68 0 0,1 -68,68 h-156 a68,68 0 0,1 -68,-68 v-156 a68,68 0 0,1 68,-68 z" />
-
     <!-- Outer Ring Dots forming Q -->
     <path
         android:fillColor="#080808"
