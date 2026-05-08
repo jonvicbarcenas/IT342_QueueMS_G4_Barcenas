@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.content.Intent
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -358,41 +360,56 @@ class MainActivity : AppCompatActivity() {
         peopleAhead: Int = 0
     ): View {
         val card = MaterialCardView(this).apply {
-            radius = 8.dp.toFloat()
+            radius = 18.dp.toFloat()
             cardElevation = 0f
             setCardBackgroundColor(getColor(R.color.surface))
             strokeWidth = 1.dp
             strokeColor = getColor(R.color.border)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
-                bottomMargin = 10.dp
+                bottomMargin = 12.dp
             }
         }
 
         val content = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(14.dp, 14.dp, 14.dp, 14.dp)
+            setPadding(16.dp, 16.dp, 16.dp, 16.dp)
         }
 
+        val header = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER_VERTICAL
+        }
         val title = TextView(this).apply {
             text = request.queueNumber ?: "Request"
             setTextColor(getColor(R.color.text_primary))
             textSize = 20f
-            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            setTypeface(typeface, Typeface.BOLD)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
         }
+        val status = TextView(this).apply {
+            text = request.status ?: "PENDING"
+            setTextColor(statusTextColor(request.status))
+            textSize = 12f
+            setTypeface(typeface, Typeface.BOLD)
+            setPadding(12.dp, 6.dp, 12.dp, 6.dp)
+            background = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = 999.dp.toFloat()
+                setColor(statusBackgroundColor(request.status))
+                setStroke(1.dp, statusTextColor(request.status))
+            }
+        }
+        header.addView(title)
+        header.addView(status)
+
         val subtitle = TextView(this).apply {
             text = listOfNotNull(request.counterName, request.serviceType).joinToString(" - ").ifBlank { "Service request" }
             setTextColor(getColor(R.color.text_secondary))
             textSize = 13f
+            setPadding(0, 6.dp, 0, 0)
         }
-        val status = TextView(this).apply {
-            text = "Status: ${request.status ?: "PENDING"}"
-            setTextColor(statusTextColor(request.status))
-            textSize = 13f
-            setTypeface(typeface, android.graphics.Typeface.BOLD)
-        }
-        content.addView(title)
+        content.addView(header)
         content.addView(subtitle)
-        content.addView(status)
         if (showPosition) {
             content.addView(TextView(this).apply {
                 text = if (position > 0) {
@@ -402,13 +419,15 @@ class MainActivity : AppCompatActivity() {
                 }
                 setTextColor(getColor(R.color.text_primary))
                 textSize = 14f
-                setPadding(0, 8.dp, 0, 0)
+                setTypeface(typeface, Typeface.BOLD)
+                setPadding(0, 10.dp, 0, 0)
             })
         }
 
         val actions = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
-            setPadding(0, 10.dp, 0, 0)
+            setBaselineAligned(false)
+            setPadding(0, 14.dp, 0, 0)
         }
         actions.addView(actionButton("Details") { showRequestDetail(request) })
         if (!request.attachmentUrl.isNullOrBlank()) {
@@ -426,11 +445,13 @@ class MainActivity : AppCompatActivity() {
         return MaterialButton(this).apply {
             text = label
             isAllCaps = false
-            minHeight = 40.dp
+            minHeight = 42.dp
+            cornerRadius = 12.dp
             strokeWidth = 1.dp
             strokeColor = ColorStateList.valueOf(getColor(R.color.border))
             setTextColor(getColor(R.color.text_primary))
             backgroundTintList = ColorStateList.valueOf(getColor(R.color.surface))
+            setTypeface(typeface, Typeface.BOLD)
             setOnClickListener { onClick() }
             layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
                 marginEnd = 8.dp
@@ -636,6 +657,15 @@ class MainActivity : AppCompatActivity() {
             "COMPLETED" -> getColor(R.color.completed_text)
             "CANCELLED" -> getColor(R.color.cancelled_text)
             else -> getColor(R.color.pending_text)
+        }
+    }
+
+    private fun statusBackgroundColor(status: String?): Int {
+        return when (status) {
+            "SERVING" -> getColor(R.color.serving_bg)
+            "COMPLETED" -> getColor(R.color.completed_bg)
+            "CANCELLED" -> getColor(R.color.cancelled_bg)
+            else -> getColor(R.color.pending_bg)
         }
     }
 
