@@ -88,6 +88,18 @@ export const tellerService = {
 
     return response.json();
   },
+
+  getAttachmentUrl(request: TellerServiceRequest): string | null {
+    if (request.attachmentUrl) {
+      return request.attachmentUrl;
+    }
+
+    if (!request.id) {
+      return null;
+    }
+
+    return `${api.API_BASE_URL}${TELLER_ENDPOINTS.REQUESTS}/${request.id}/attachment`;
+  },
 };
 
 export default tellerService;

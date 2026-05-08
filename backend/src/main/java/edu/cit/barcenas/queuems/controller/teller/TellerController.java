@@ -64,6 +64,26 @@ public class TellerController {
         }
     }
 
+    @GetMapping("/requests/{id}/attachment")
+    public ResponseEntity<?> downloadAssignedRequestAttachment(
+            @PathVariable String id,
+            Authentication authentication) {
+        try {
+            ServiceRequest request = tellerService.getAssignedRequestById((String) authentication.getPrincipal(), id);
+            if (request.getAttachmentUrl() == null || request.getAttachmentUrl().isBlank()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.status(302)
+                    .header("Location", request.getAttachmentUrl())
+                    .build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
     @PutMapping("/requests/next/serve")
     public ResponseEntity<?> serveNextRequest(Authentication authentication) {
         try {
