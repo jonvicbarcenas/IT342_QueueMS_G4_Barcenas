@@ -65,6 +65,30 @@ public class AdminController {
         }
     }
 
+    @PutMapping("/users/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody AdminStaffUserDTO body) {
+        try {
+            User user = adminService.updateUser(id, body);
+            return ResponseEntity.ok(user);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+        try {
+            adminService.deleteUser(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
     @GetMapping("/requests")
     public ResponseEntity<?> getRequests() {
         try {

@@ -9,6 +9,9 @@ export interface UserServiceRequest {
   assignedTellerId?: string;
   assignedTellerName?: string;
   notes?: string;
+  attachmentOriginalName?: string;
+  attachmentContentType?: string;
+  attachmentUrl?: string;
   status: UserServiceRequestStatus;
   queueNumber: string;
   createdAt: string;
@@ -18,4 +21,11 @@ export interface UserServiceRequest {
 export interface CreateUserServiceRequestPayload {
   counterId: string;
   notes?: string;
+}
+
+export interface HolidayStatus {
+  date: string;
+  holiday: boolean;
+  name?: string;
+  localName?: string;
 }

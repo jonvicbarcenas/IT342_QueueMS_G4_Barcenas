@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useAuth } from '@/context';
-import { Button, Input } from '@components/common';
+import { AccountMenu, Button, Input } from '@components/common';
 import { userCounterService } from '@services/users/userCounterService';
 import { userServiceRequestService } from '@services/users/userServiceRequestService';
-import type { CreateUserServiceRequestPayload, UserServiceRequest, UserServiceRequestStatus } from '@/types/users/userServiceRequest';
+import { webSocketService } from '@services/websocketService';
+import type {
+  CreateUserServiceRequestPayload,
+  HolidayStatus,
+  UserServiceRequest,
+  UserServiceRequestStatus,
+} from '@/types/users/userServiceRequest';
 import type { UserCounter } from '@/types/users/userCounter';
 
 const STATUS_LABELS: Record<UserServiceRequestStatus, string> = {
@@ -20,8 +26,6 @@ const STATUS_STYLES: Record<UserServiceRequestStatus, string> = {
   COMPLETED: 'bg-green-100 text-green-700 border-green-200',
   CANCELLED: 'bg-red-100 text-red-700 border-red-200',
 };
-
-const AUTO_REFRESH_INTERVAL_MS = 5000;
 
 const getCounterName = (request: UserServiceRequest, counters: UserCounter[]): string => {
   if (request.counterName) {
@@ -51,11 +55,13 @@ const countByStatus = (requests: UserServiceRequest[], status: UserServiceReques
 );
 
 const UserDashboardPage = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [requests, setRequests] = useState<UserServiceRequest[]>([]);
   const [counters, setCounters] = useState<UserCounter[]>([]);
   const [selectedCounterId, setSelectedCounterId] = useState('');
   const [notes, setNotes] = useState('');
+  const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
+  const [holidayStatus, setHolidayStatus] = useState<HolidayStatus | null>(null);
   const [isLoadingRequests, setIsLoadingRequests] = useState(true);
   const [isLoadingCounters, setIsLoadingCounters] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -117,23 +123,56 @@ const UserDashboardPage = () => {
     }
   }, []);
 
+  const loadHolidayStatus = useCallback(async () => {
+    try {
+      const data = await userServiceRequestService.getTodayHolidayStatus();
+      setHolidayStatus(data);
+    } catch (error) {
+      console.error('Unable to load holiday status:', error);
+    }
+  }, []);
+
   useEffect(() => {
     loadRequests();
     loadCounters();
-  }, [loadRequests, loadCounters]);
+    loadHolidayStatus();
 
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      if (document.hidden) {
-        return;
+    // Connect to WebSocket for real-time updates
+    const setupWebSocket = async () => {
+      if (!user?.uid) return;
+
+      try {
+        await webSocketService.connect();
+
+        // Subscribe to user-specific updates
+        webSocketService.subscribe(`/topic/user/${user.uid}`, (updatedRequest: UserServiceRequest) => {
+          setRequests(currentRequests => {
+            const index = currentRequests.findIndex(r => r.id === updatedRequest.id);
+            if (index !== -1) {
+              const newRequests = [...currentRequests];
+              newRequests[index] = updatedRequest;
+              return newRequests;
+            } else {
+              return [updatedRequest, ...currentRequests];
+            }
+          });
+        });
+
+        // Also subscribe to general queue for counter availability/updates if needed
+        webSocketService.subscribe('/topic/queue', () => {
+          loadCounters(true);
+        });
+      } catch (error) {
+        console.error('WebSocket connection failed:', error);
       }
+    };
 
-      loadRequests(true);
-      loadCounters(true);
-    }, AUTO_REFRESH_INTERVAL_MS);
+    setupWebSocket();
 
-    return () => window.clearInterval(intervalId);
-  }, [loadRequests, loadCounters]);
+    return () => {
+      webSocketService.disconnect();
+    };
+  }, [loadRequests, loadCounters, loadHolidayStatus, user?.uid]);
 
   const handleCreateRequest = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -156,10 +195,25 @@ const UserDashboardPage = () => {
 
     try {
       const createdRequest = await userServiceRequestService.createRequest(payload);
-      setRequests(currentRequests => [createdRequest, ...currentRequests]);
+      let savedRequest = createdRequest;
+      let attachmentFailed = false;
+
+      if (attachmentFile) {
+        try {
+          savedRequest = await userServiceRequestService.uploadAttachment(createdRequest.id, attachmentFile);
+        } catch (error) {
+          attachmentFailed = true;
+          setPageError(error instanceof Error ? error.message : 'Request was created, but the attachment upload failed.');
+        }
+      }
+
+      setRequests(currentRequests => [savedRequest, ...currentRequests]);
       setSelectedCounterId('');
       setNotes('');
-      setSuccessMessage(`Request ${createdRequest.queueNumber} was created successfully.`);
+      setAttachmentFile(null);
+      setSuccessMessage(attachmentFailed
+        ? `Request ${savedRequest.queueNumber} was created, but the attachment was not uploaded.`
+        : `Request ${savedRequest.queueNumber} was created successfully.`);
     } catch (error) {
       setFormError(error instanceof Error ? error.message : 'Unable to create service request.');
     } finally {
@@ -190,6 +244,11 @@ const UserDashboardPage = () => {
     }
   };
 
+  const handleOpenAttachment = (request: UserServiceRequest) => {
+    const attachmentUrl = request.attachmentUrl || userServiceRequestService.getAttachmentDownloadUrl(request.id);
+    window.open(attachmentUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <nav className="border-b border-slate-200 bg-white">
@@ -198,12 +257,7 @@ const UserDashboardPage = () => {
             <p className="text-sm font-semibold text-blue-700">QueueMS</p>
             <h1 className="text-lg font-bold">Service Request Dashboard</h1>
           </div>
-          <button
-            onClick={logout}
-            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
-          >
-            Logout
-          </button>
+          <AccountMenu />
         </div>
       </nav>
 
@@ -224,6 +278,12 @@ const UserDashboardPage = () => {
         {pageError && (
           <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {pageError}
+          </div>
+        )}
+
+        {holidayStatus?.holiday && (
+          <div className="mb-4 rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
+            Requests are blocked today because of {holidayStatus.localName ?? holidayStatus.name ?? 'a public holiday'}.
           </div>
         )}
 
@@ -280,11 +340,26 @@ const UserDashboardPage = () => {
                 disabled={isCreating}
               />
 
+              <div>
+                <label htmlFor="supportingDocument" className="mb-1 block text-sm font-medium text-slate-700">
+                  Supporting Document
+                </label>
+                <input
+                  id="supportingDocument"
+                  type="file"
+                  accept=".pdf,image/png,image/jpeg,image/webp"
+                  onChange={event => setAttachmentFile(event.target.files?.[0] ?? null)}
+                  disabled={isCreating}
+                  className="block w-full rounded-md border border-slate-300 bg-white px-4 py-2 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-blue-700"
+                />
+                <p className="mt-1 text-xs text-slate-500">Accepted files: PDF, JPG, PNG, or WEBP up to 5 MB.</p>
+              </div>
+
               <Button
                 type="submit"
                 isLoading={isCreating}
                 className="bg-blue-700 hover:bg-blue-800"
-                disabled={counters.length === 0}
+                disabled={counters.length === 0 || holidayStatus?.holiday}
               >
                 Create Queue Request
               </Button>
@@ -374,6 +449,15 @@ const UserDashboardPage = () => {
                         )}
                         {request.notes && (
                           <p className="mt-1 text-xs text-slate-500">Note: {request.notes}</p>
+                        )}
+                        {request.attachmentUrl && (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenAttachment(request)}
+                            className="mt-1 block text-xs font-medium text-blue-700 hover:underline"
+                          >
+                            {request.attachmentOriginalName ?? 'View attachment'}
+                          </button>
                         )}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm">

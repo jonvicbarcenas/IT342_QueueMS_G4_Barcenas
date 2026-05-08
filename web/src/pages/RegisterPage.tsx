@@ -85,9 +85,18 @@ const RegisterPage = () => {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    // Redirect to backend OAuth2 endpoint
-    authService.initiateGoogleLogin();
+  const handleGoogleSignIn = async () => {
+    setErrors({});
+    setIsLoading(true);
+
+    try {
+      await authService.initiateGoogleLogin();
+    } catch (err) {
+      setErrors({
+        general: err instanceof Error ? err.message : 'Google login is not available.',
+      });
+      setIsLoading(false);
+    }
   };
 
   return (

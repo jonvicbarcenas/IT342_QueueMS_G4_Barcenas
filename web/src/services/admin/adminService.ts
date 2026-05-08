@@ -99,6 +99,29 @@ export const adminService = {
     return response.json();
   },
 
+  async updateUser(id: string, payload: AdminStaffUserPayload): Promise<AdminUser> {
+    const response = await api.authenticatedFetch(`${api.API_BASE_URL}${ADMIN_ENDPOINTS.USERS}/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(await readErrorMessage(response, 'Failed to update user'));
+    }
+
+    return response.json();
+  },
+
+  async deleteUser(id: string): Promise<void> {
+    const response = await api.authenticatedFetch(`${api.API_BASE_URL}${ADMIN_ENDPOINTS.USERS}/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(await readErrorMessage(response, 'Failed to delete user'));
+    }
+  },
+
   async getRequests(): Promise<AdminServiceRequest[]> {
     const response = await api.authenticatedFetch(`${api.API_BASE_URL}${ADMIN_ENDPOINTS.REQUESTS}`);
 

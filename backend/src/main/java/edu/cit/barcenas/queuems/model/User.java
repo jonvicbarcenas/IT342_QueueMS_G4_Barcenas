@@ -9,6 +9,7 @@ public class User {
     private String role = "USER"; // default
     private String counterId;
     private String counterName;
+    private String fcmToken;
 
     public User() {
     }
@@ -91,5 +92,13 @@ public class User {
 
     public void setCounterName(String counterName) {
         this.counterName = counterName;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }
