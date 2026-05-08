@@ -45,50 +45,50 @@ const AccountMenu = () => {
       <button
         type="button"
         onClick={() => setIsOpen(current => !current)}
-        className="flex min-h-11 items-center gap-3 rounded-xl border border-stone-200 bg-[#fffef9] px-3 py-2 text-left transition-colors hover:bg-[#f7f5ef] focus:outline-none focus:ring-2 focus:ring-stone-950/20"
+        className="flex items-center gap-3 rounded-md border border-slate-200 bg-white px-3 py-2 text-left transition-colors hover:bg-slate-50"
         aria-expanded={isOpen}
       >
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-stone-950 text-sm font-semibold text-[#f7f5ef]">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-700 text-sm font-semibold text-white">
           {initials}
         </span>
         <span className="hidden sm:block">
-          <span className="block text-sm font-semibold text-stone-950">{fullName}</span>
-          <span className="block text-xs text-stone-500">{user?.role ?? 'USER'}</span>
+          <span className="block text-sm font-semibold text-slate-900">{fullName}</span>
+          <span className="block text-xs text-slate-500">{user?.role ?? 'USER'}</span>
         </span>
-        <span className="text-stone-400">v</span>
+        <span className="text-slate-400">v</span>
       </button>
 
       {isOpen && (
-        <div className="qm-card absolute right-0 z-20 mt-2 w-80 rounded-2xl p-4">
-          <div className="border-b border-stone-200 pb-3">
-            <p className="text-sm font-semibold text-stone-950">{fullName}</p>
-            <p className="text-xs text-stone-500">{user?.email}</p>
-            <p className="mt-1 text-xs font-medium uppercase text-stone-700">{user?.role ?? 'USER'}</p>
+        <div className="absolute right-0 z-20 mt-2 w-80 rounded-lg border border-slate-200 bg-white p-4 shadow-lg">
+          <div className="border-b border-slate-200 pb-3">
+            <p className="text-sm font-semibold text-slate-900">{fullName}</p>
+            <p className="text-xs text-slate-500">{user?.email}</p>
+            <p className="mt-1 text-xs font-medium uppercase text-blue-700">{user?.role ?? 'USER'}</p>
           </div>
 
           {isEditing ? (
             <form onSubmit={handleSubmit} className="mt-4 space-y-3">
               <div>
-                <label htmlFor="profileFirstname" className="mb-1 block text-sm font-medium text-stone-700">
+                <label htmlFor="profileFirstname" className="mb-1 block text-sm font-medium text-slate-700">
                   First Name
                 </label>
                 <input
                   id="profileFirstname"
                   value={firstname}
                   onChange={event => setFirstname(event.target.value)}
-                  className="w-full rounded-xl border border-stone-200 bg-[#fffef9] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-stone-950/20"
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600"
                   required
                 />
               </div>
               <div>
-                <label htmlFor="profileLastname" className="mb-1 block text-sm font-medium text-stone-700">
+                <label htmlFor="profileLastname" className="mb-1 block text-sm font-medium text-slate-700">
                   Last Name
                 </label>
                 <input
                   id="profileLastname"
                   value={lastname}
                   onChange={event => setLastname(event.target.value)}
-                  className="w-full rounded-xl border border-stone-200 bg-[#fffef9] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-stone-950/20"
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600"
                   required
                 />
               </div>
@@ -99,7 +99,7 @@ const AccountMenu = () => {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 rounded-xl bg-stone-950 px-3 py-2 text-sm font-medium text-[#f7f5ef] hover:bg-stone-800 disabled:bg-stone-300"
+                  className="flex-1 rounded-md bg-blue-700 px-3 py-2 text-sm font-medium text-white hover:bg-blue-800 disabled:bg-slate-300"
                 >
                   {isSaving ? 'Saving...' : 'Save'}
                 </button>
@@ -111,7 +111,7 @@ const AccountMenu = () => {
                     setFirstname(user?.firstname ?? '');
                     setLastname(user?.lastname ?? '');
                   }}
-                  className="rounded-xl border border-stone-200 px-3 py-2 text-sm font-medium text-stone-700 hover:bg-[#f7f5ef]"
+                  className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
@@ -119,7 +119,7 @@ const AccountMenu = () => {
             </form>
           ) : (
             <div className="mt-3 space-y-2">
-              {successMessage && <p className="rounded-xl border border-stone-200 bg-[#f7f5ef] px-3 py-2 text-sm text-stone-700">{successMessage}</p>}
+              {successMessage && <p className="rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">{successMessage}</p>}
               <button
                 type="button"
                 onClick={() => {
@@ -127,14 +127,14 @@ const AccountMenu = () => {
                   setSuccessMessage('');
                   setError('');
                 }}
-                className="w-full rounded-xl px-3 py-2 text-left text-sm font-medium text-stone-700 hover:bg-[#f7f5ef]"
+                className="w-full rounded-md px-3 py-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
                 Edit profile
               </button>
               <button
                 type="button"
                 onClick={logout}
-                className="w-full rounded-xl px-3 py-2 text-left text-sm font-medium text-red-700 hover:bg-red-50"
+                className="w-full rounded-md px-3 py-2 text-left text-sm font-medium text-red-700 hover:bg-red-50"
               >
                 Sign out
               </button>

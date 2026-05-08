@@ -44,11 +44,11 @@ const OAuth2CallbackPage = () => {
 
   if (error) {
     return (
-      <div className="qm-shell flex min-h-screen items-center justify-center px-4">
-        <div className="qm-card w-full max-w-md rounded-[28px] p-8 text-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md text-center">
           <div className="mb-4">
             <svg
-              className="mx-auto h-16 w-16 text-red-700"
+              className="w-16 h-16 text-red-500 mx-auto"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -61,22 +61,22 @@ const OAuth2CallbackPage = () => {
               />
             </svg>
           </div>
-          <h2 className="mb-2 text-2xl font-bold text-stone-950">Authentication Failed</h2>
-          <p className="mb-4 text-stone-600">{error}</p>
-          <p className="text-sm text-stone-500">Redirecting to login page...</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Authentication Failed</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-sm text-gray-500">Redirecting to login page...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="qm-shell flex min-h-screen items-center justify-center px-4">
-      <div className="qm-card w-full max-w-md rounded-[28px] p-8 text-center">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md text-center">
         <div className="mb-4">
-          <div className="mx-auto h-16 w-16 animate-spin rounded-full border-b-2 border-stone-950"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
         </div>
-        <h2 className="mb-2 text-2xl font-bold text-stone-950">Authenticating...</h2>
-        <p className="text-stone-600">Please wait while we complete your sign-in.</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Authenticating...</h2>
+        <p className="text-gray-600">Please wait while we complete your sign-in.</p>
       </div>
     </div>
   );

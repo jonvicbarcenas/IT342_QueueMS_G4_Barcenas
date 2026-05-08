@@ -77,18 +77,6 @@ const UserDashboardPage = () => {
     completed: countByStatus(requests, 'COMPLETED'),
   }), [requests]);
 
-  useEffect(() => {
-    if (!successMessage) {
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      setSuccessMessage('');
-    }, 4000);
-
-    return () => window.clearTimeout(timer);
-  }, [successMessage]);
-
   const loadRequests = useCallback(async (silent = false) => {
     if (!silent) {
       setIsLoadingRequests(true);
@@ -262,27 +250,23 @@ const UserDashboardPage = () => {
   };
 
   return (
-    <div className="qm-shell min-h-screen text-slate-900">
-      <nav className="qm-nav">
-        <div className="mx-auto flex h-16 w-full max-w-[1760px] items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <span className="qm-logo h-10 w-10"><span className="qm-logo-mark" /></span>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">QueueMS</p>
-              <h1 className="text-lg font-bold">Service Request Dashboard</h1>
-            </div>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <nav className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div>
+            <p className="text-sm font-semibold text-blue-700">QueueMS</p>
+            <h1 className="text-lg font-bold">Service Request Dashboard</h1>
           </div>
           <AccountMenu />
         </div>
       </nav>
 
-      <main className="mx-auto w-full max-w-[1760px] px-4 py-8 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6">
           <p className="text-sm text-slate-600">
             Signed in as {user?.firstname} {user?.lastname} ({user?.email})
           </p>
-            <p className="qm-dot-text mt-2 text-3xl font-black">REQUEST. TRACK. PREVENT.</p>
-            <p className="text-sm text-slate-500">Role: {user?.role ?? 'USER'}</p>
+          <p className="text-sm text-slate-500">Role: {user?.role ?? 'USER'}</p>
         </div>
 
         {successMessage && (
@@ -303,7 +287,7 @@ const UserDashboardPage = () => {
           </div>
         )}
 
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
           <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5">
               <h2 className="text-2xl font-bold">Create Service Request</h2>
@@ -366,7 +350,7 @@ const UserDashboardPage = () => {
                   accept=".pdf,image/png,image/jpeg,image/webp"
                   onChange={event => setAttachmentFile(event.target.files?.[0] ?? null)}
                   disabled={isCreating}
-                  className="block w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-stone-950 file:px-3 file:py-2 file:text-sm file:font-medium file:text-[#f7f5ef]"
+                  className="block w-full rounded-md border border-slate-300 bg-white px-4 py-2 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-blue-700"
                 />
                 <p className="mt-1 text-xs text-slate-500">Accepted files: PDF, JPG, PNG, or WEBP up to 5 MB.</p>
               </div>
@@ -374,7 +358,7 @@ const UserDashboardPage = () => {
               <Button
                 type="submit"
                 isLoading={isCreating}
-                className="bg-stone-950 hover:bg-stone-800"
+                className="bg-blue-700 hover:bg-blue-800"
                 disabled={counters.length === 0 || holidayStatus?.holiday}
               >
                 Create Queue Request
@@ -470,7 +454,7 @@ const UserDashboardPage = () => {
                           <button
                             type="button"
                             onClick={() => handleOpenAttachment(request)}
-                            className="mt-1 block text-xs font-medium text-stone-950 underline-offset-4 hover:underline"
+                            className="mt-1 block text-xs font-medium text-blue-700 hover:underline"
                           >
                             {request.attachmentOriginalName ?? 'View attachment'}
                           </button>
