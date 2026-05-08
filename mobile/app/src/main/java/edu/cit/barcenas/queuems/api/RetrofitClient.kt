@@ -7,13 +7,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "http://10.0.2.2:8080/" // Standard emulator address for local backend
+    val BASE_URL: String = BackendUrlProvider.primaryBaseUrl
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
     private val client = OkHttpClient.Builder()
+        .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
+        .readTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
+        .addInterceptor(BackendFallbackInterceptor())
         .addInterceptor(logging)
         .build()
 
@@ -27,4 +30,5 @@ object RetrofitClient {
 
         retrofit.create(ApiService::class.java)
     }
+
 }

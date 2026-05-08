@@ -1,6 +1,7 @@
 package edu.cit.barcenas.queuems.ui.login
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -43,6 +44,29 @@ class LoginActivity : AppCompatActivity() {
 
         setupListeners()
         observeViewModel()
+        handleDeepLink(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleDeepLink(intent)
+    }
+
+    private fun handleDeepLink(intent: Intent?) {
+        val data: Uri? = intent?.data
+        if (data != null && data.scheme == "queuems" && data.host == "auth") {
+            val token = data.getQueryParameter("token")
+            val error = data.getQueryParameter("error")
+
+            if (token != null) {
+                sessionManager.saveAuthToken(token)
+                Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            } else if (error != null) {
+                Toast.makeText(this, "Login failed: $error", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun setupListeners() {
@@ -59,7 +83,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.btnGoogle.setOnClickListener {
-            Toast.makeText(this, "Google Login coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("${RetrofitClient.BASE_URL}oauth2/authorization/google")))
         }
 
         binding.tvRegisterLink.setOnClickListener {

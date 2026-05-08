@@ -1,11 +1,19 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.googleServices)
 }
 
 android {
     namespace = "edu.cit.barcenas.queuems"
     compileSdk = 34
+
+    val queueMsApiBaseUrl = providers.gradleProperty("QUEUEMS_API_BASE_URL")
+        .orElse("http://10.0.2.2:8080/")
+        .get()
+    val queueMsApiFallbackUrls = providers.gradleProperty("QUEUEMS_API_FALLBACK_URLS")
+        .orElse("http://10.0.2.2:8080/,http://127.0.0.1:8080/")
+        .get()
 
     defaultConfig {
         applicationId = "edu.cit.barcenas.queuems"
@@ -15,6 +23,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "QUEUE_MS_API_BASE_URL", "\"$queueMsApiBaseUrl\"")
+        buildConfigField("String", "QUEUE_MS_API_FALLBACK_URLS", "\"$queueMsApiFallbackUrls\"")
     }
 
     buildTypes {
@@ -35,6 +45,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -57,6 +68,8 @@ dependencies {
     // Lifecycle
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.firebase.messaging)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

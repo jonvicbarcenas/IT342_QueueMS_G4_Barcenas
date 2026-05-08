@@ -8,6 +8,7 @@ class SessionManager(context: Context) {
 
     companion object {
         private const val USER_TOKEN = "user_token"
+        private const val FCM_TOKEN = "fcm_token"
     }
 
     fun saveAuthToken(token: String) {
@@ -24,5 +25,13 @@ class SessionManager(context: Context) {
         val editor = prefs.edit()
         editor.remove(USER_TOKEN)
         editor.apply()
+    }
+
+    fun saveFcmToken(token: String) {
+        prefs.edit().putString(FCM_TOKEN, token).apply()
+    }
+
+    fun fetchFcmToken(): String? {
+        return prefs.getString(FCM_TOKEN, null)
     }
 }

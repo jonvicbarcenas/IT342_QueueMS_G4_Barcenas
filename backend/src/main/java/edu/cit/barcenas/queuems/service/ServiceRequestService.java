@@ -1,5 +1,6 @@
 package edu.cit.barcenas.queuems.service;
 
+import edu.cit.barcenas.queuems.dto.QueuePositionDTO;
 import edu.cit.barcenas.queuems.model.Counter;
 import edu.cit.barcenas.queuems.model.ServiceRequest;
 import edu.cit.barcenas.queuems.model.User;
@@ -16,6 +17,7 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 public class ServiceRequestService {
+    private static final int ESTIMATED_MINUTES_PER_REQUEST = 5;
 
     private final ServiceRequestRepository repository;
     private final CounterRepository counterRepository;
@@ -100,6 +102,44 @@ public class ServiceRequestService {
 
     public List<ServiceRequest> getUserRequests(String userId) throws ExecutionException, InterruptedException {
         return repository.findByUserId(userId);
+    }
+
+    public QueuePositionDTO getQueuePosition(String requestId, String userId)
+            throws ExecutionException, InterruptedException {
+        ServiceRequest request = getUserRequestById(requestId, userId);
+        if (!ServiceRequest.STATUS_PENDING.equals(request.getStatus())
+                && !ServiceRequest.STATUS_SERVING.equals(request.getStatus())) {
+            return new QueuePositionDTO(request.getId(), 0, 0, 0, 0);
+        }
+
+        List<ServiceRequest> activeRequests = repository.findByCounterId(request.getCounterId()).stream()
+                .filter(item -> ServiceRequest.STATUS_PENDING.equals(item.getStatus())
+                        || ServiceRequest.STATUS_SERVING.equals(item.getStatus()))
+                .sorted(java.util.Comparator.comparing(
+                        ServiceRequest::getCreatedAt,
+                        java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder())))
+                .toList();
+
+        int index = -1;
+        for (int i = 0; i < activeRequests.size(); i++) {
+            if (request.getId().equals(activeRequests.get(i).getId())) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index < 0) {
+            return new QueuePositionDTO(request.getId(), 0, activeRequests.size(), 0, 0);
+        }
+
+        int position = index + 1;
+        int peopleAhead = index;
+        return new QueuePositionDTO(
+                request.getId(),
+                position,
+                activeRequests.size(),
+                peopleAhead,
+                peopleAhead * ESTIMATED_MINUTES_PER_REQUEST);
     }
 
     public ServiceRequest cancelRequest(String requestId, String userId) throws ExecutionException, InterruptedException {

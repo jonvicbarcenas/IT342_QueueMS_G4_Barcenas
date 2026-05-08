@@ -34,14 +34,32 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             // Use AuthService as a Facade to handle the login/registration logic
             String token = authService.handleOAuth2Login(oAuth2User);
             
-            // Redirect to frontend with token
-            String redirectUrl = String.format("%s/auth/callback?token=%s", frontendUrl, token);
+            // Determine redirect URL
+            String redirectUrl;
+            String userAgent = request.getHeader("User-Agent");
+            boolean isMobile = userAgent != null && (userAgent.contains("Android") || userAgent.contains("iPhone"));
+
+            if (isMobile) {
+                // Redirect back to the mobile app via deep link
+                redirectUrl = String.format("queuems://auth/callback?token=%s", token);
+            } else {
+                // Redirect to frontend with token
+                redirectUrl = String.format("%s/auth/callback?token=%s", frontendUrl, token);
+            }
+
             getRedirectStrategy().sendRedirect(request, response, redirectUrl);
             
         } catch (Exception e) {
-            // Redirect to frontend with error
-            String redirectUrl = String.format("%s/auth/callback?error=%s", frontendUrl, 
-                    e.getMessage().replace(" ", "+"));
+            String errorMessage = e.getMessage().replace(" ", "+");
+            String redirectUrl;
+            String userAgent = request.getHeader("User-Agent");
+            boolean isMobile = userAgent != null && (userAgent.contains("Android") || userAgent.contains("iPhone"));
+
+            if (isMobile) {
+                redirectUrl = String.format("queuems://auth/callback?error=%s", errorMessage);
+            } else {
+                redirectUrl = String.format("%s/auth/callback?error=%s", frontendUrl, errorMessage);
+            }
             getRedirectStrategy().sendRedirect(request, response, redirectUrl);
         }
     }
