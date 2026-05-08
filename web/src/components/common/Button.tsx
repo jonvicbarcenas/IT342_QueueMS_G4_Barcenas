@@ -14,12 +14,12 @@ const Button = ({
   disabled,
   ...props
 }: ButtonProps) => {
-  const baseStyles = 'w-full px-4 py-3 rounded-md font-medium transition-colors duration-200 flex items-center justify-center gap-2';
+  const baseStyles = 'min-h-11 w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-stone-950 focus:ring-offset-2 focus:ring-offset-[#f4f2ed] disabled:opacity-50';
   
   const variants = {
-    primary: 'bg-black text-white hover:bg-gray-800 disabled:bg-gray-400',
-    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 disabled:bg-gray-100',
-    outline: 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 disabled:bg-gray-50',
+    primary: 'bg-[#11100e] text-[#f7f5ef] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] hover:bg-[#24211d]',
+    secondary: 'border border-stone-200 bg-[#efede7] text-stone-950 hover:bg-[#e4e1d8]',
+    outline: 'border border-stone-200 bg-[#fffef9] text-stone-900 hover:border-stone-400 hover:bg-[#f7f5ef]',
   };
 
   return (
