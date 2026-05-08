@@ -51,6 +51,18 @@ const TellerDashboardPage = () => {
     completed: countByStatus(requests, 'COMPLETED'),
   }), [requests]);
 
+  useEffect(() => {
+    if (!successMessage) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setSuccessMessage('');
+    }, 4000);
+
+    return () => window.clearTimeout(timer);
+  }, [successMessage]);
+
   const loadTellerData = useCallback(async (silent = false) => {
     if (!silent) {
       setIsLoading(true);
@@ -190,24 +202,38 @@ const TellerDashboardPage = () => {
     }
   };
 
+  const handleOpenDocument = (request: TellerServiceRequest) => {
+    const attachmentUrl = tellerService.getAttachmentUrl(request);
+    if (!attachmentUrl) {
+      setPageError('No supporting document is attached to this request.');
+      return;
+    }
+
+    window.open(attachmentUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <nav className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div>
-            <p className="text-sm font-semibold text-blue-700">QueueMS Teller</p>
-            <h1 className="text-lg font-bold">Counter Queue Dashboard</h1>
+    <div className="qm-shell min-h-screen text-slate-900">
+      <nav className="qm-nav">
+        <div className="mx-auto flex h-16 w-full max-w-[1760px] items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <span className="qm-logo h-10 w-10"><span className="qm-logo-mark" /></span>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">QueueMS Teller</p>
+              <h1 className="text-lg font-bold">Counter Queue Dashboard</h1>
+            </div>
           </div>
           <AccountMenu />
         </div>
       </nav>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-[1760px] px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm text-slate-600">
               Signed in as {user?.firstname} {user?.lastname} ({user?.email})
             </p>
+            <p className="qm-dot-text mt-2 text-3xl font-black">SERVE. UPDATE. PREVENT.</p>
             <p className="text-sm text-slate-500">Role: {user?.role ?? 'TELLER'}</p>
           </div>
           <button
@@ -231,7 +257,7 @@ const TellerDashboardPage = () => {
           </div>
         )}
 
-        <div className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
+        <div className="grid gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
           <aside className="space-y-4">
             <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-xs font-semibold uppercase text-slate-500">Assigned Counter</p>
@@ -245,7 +271,7 @@ const TellerDashboardPage = () => {
                   <button
                     onClick={handleCounterStatus}
                     disabled={isUpdatingCounter}
-                    className="mt-5 w-full rounded-md bg-blue-700 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-800 disabled:bg-slate-300"
+                    className="mt-5 w-full rounded-xl bg-stone-950 px-4 py-3 text-sm font-medium text-[#f7f5ef] transition-colors hover:bg-stone-800 disabled:bg-slate-300"
                   >
                     {isUpdatingCounter
                       ? 'Updating...'
@@ -282,7 +308,7 @@ const TellerDashboardPage = () => {
             </section>
           </aside>
 
-          <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+          <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
             <div className="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-bold">Assigned Requests</h2>
@@ -291,7 +317,7 @@ const TellerDashboardPage = () => {
               <button
                 onClick={handleServeNext}
                 disabled={isServingNext || stats.pending === 0 || !counter}
-                className="rounded-md bg-blue-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-800 disabled:bg-slate-300"
+                className="rounded-xl bg-stone-950 px-4 py-2 text-sm font-medium text-[#f7f5ef] transition-colors hover:bg-stone-800 disabled:bg-slate-300"
               >
                 {isServingNext ? 'Serving...' : 'Serve Next'}
               </button>
@@ -302,75 +328,102 @@ const TellerDashboardPage = () => {
             ) : requests.length === 0 ? (
               <div className="px-6 py-10 text-center text-sm text-slate-600">No requests assigned to this counter.</div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-slate-200">
-                  <thead className="bg-slate-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-semibold uppercase text-slate-500">Queue No.</th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold uppercase text-slate-500">Service</th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold uppercase text-slate-500">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold uppercase text-slate-500">Created</th>
-                      <th className="px-6 py-3 text-right text-xs font-semibold uppercase text-slate-500">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200">
-                    {requests.map(request => (
-                      <tr key={request.id}>
-                        <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-slate-900">
-                          {request.queueNumber}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-slate-700">
+              <div>
+                <div className="hidden grid-cols-[82px_minmax(150px,1fr)_130px_minmax(150px,220px)_170px_minmax(160px,210px)] gap-4 border-b border-slate-200 bg-slate-50 px-6 py-3 text-xs font-semibold uppercase text-slate-500 2xl:grid">
+                  <span>Queue</span>
+                  <span>Service</span>
+                  <span>Status</span>
+                  <span>Document</span>
+                  <span>Created</span>
+                  <span className="text-right">Action</span>
+                </div>
+                <div className="divide-y divide-slate-200">
+                  {requests.map(request => (
+                    <article
+                      key={request.id}
+                      className="grid gap-4 px-6 py-5 2xl:grid-cols-[82px_minmax(150px,1fr)_130px_minmax(150px,220px)_170px_minmax(160px,210px)] 2xl:items-center"
+                    >
+                      <div>
+                        <p className="text-xs font-semibold uppercase text-slate-500 2xl:hidden">Queue</p>
+                        <p className="text-base font-bold text-slate-900">{request.queueNumber}</p>
+                      </div>
+
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold uppercase text-slate-500 2xl:hidden">Service</p>
+                        <p className="text-sm font-medium text-slate-800">
                           {request.serviceType ?? counter?.serviceType ?? 'General Service'}
-                          {request.notes && (
-                            <p className="mt-1 text-xs text-slate-500">Note: {request.notes}</p>
-                          )}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4 text-sm">
-                          <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${STATUS_STYLES[request.status]}`}>
-                            {request.status}
-                          </span>
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
-                          {formatDate(request.createdAt)}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
-                          <div className="flex justify-end gap-2">
-                            {request.status === 'PENDING' && (
-                              <button
-                                onClick={() => handleServeRequest(request)}
-                                disabled={updatingRequestId === request.id}
-                                className="rounded-md bg-blue-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-800 disabled:bg-slate-300"
-                              >
-                                Serve
-                              </button>
-                            )}
-                            {request.status === 'SERVING' && (
-                              <button
-                                onClick={() => handleStatusUpdate(request, 'COMPLETED')}
-                                disabled={updatingRequestId === request.id}
-                                className="rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:bg-slate-300"
-                              >
-                                Complete
-                              </button>
-                            )}
-                            {(request.status === 'PENDING' || request.status === 'SERVING') && (
-                              <button
-                                onClick={() => handleStatusUpdate(request, 'CANCELLED')}
-                                disabled={updatingRequestId === request.id}
-                                className="rounded-md border border-red-300 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 disabled:text-slate-400"
-                              >
-                                Cancel
-                              </button>
-                            )}
-                            {request.status !== 'PENDING' && request.status !== 'SERVING' && (
-                              <span className="text-slate-400">No action</span>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </p>
+                        {request.notes && (
+                          <p className="mt-1 text-xs text-slate-500">Note: {request.notes}</p>
+                        )}
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-semibold uppercase text-slate-500 2xl:hidden">Status</p>
+                        <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${STATUS_STYLES[request.status]}`}>
+                          {request.status}
+                        </span>
+                      </div>
+
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold uppercase text-slate-500 2xl:hidden">Document</p>
+                        {request.attachmentUrl || request.attachmentOriginalName ? (
+                          <button
+                            onClick={() => handleOpenDocument(request)}
+                            className="min-h-10 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                          >
+                            View Document
+                          </button>
+                        ) : (
+                          <span className="text-sm text-slate-400">No document</span>
+                        )}
+                        {request.attachmentOriginalName && (
+                          <p className="mt-1 truncate text-xs text-slate-500" title={request.attachmentOriginalName}>
+                            {request.attachmentOriginalName}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-semibold uppercase text-slate-500 2xl:hidden">Created</p>
+                        <p className="text-sm text-slate-600">{formatDate(request.createdAt)}</p>
+                      </div>
+
+                      <div className="flex flex-wrap justify-start gap-2 2xl:justify-end">
+                        {request.status === 'PENDING' && (
+                          <button
+                            onClick={() => handleServeRequest(request)}
+                            disabled={updatingRequestId === request.id}
+                            className="min-h-10 rounded-xl bg-stone-950 px-3 py-2 text-sm font-medium text-[#f7f5ef] transition-colors hover:bg-stone-800 disabled:bg-slate-300"
+                          >
+                            Serve
+                          </button>
+                        )}
+                        {request.status === 'SERVING' && (
+                          <button
+                            onClick={() => handleStatusUpdate(request, 'COMPLETED')}
+                            disabled={updatingRequestId === request.id}
+                            className="min-h-10 rounded-xl bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:bg-slate-300"
+                          >
+                            Complete
+                          </button>
+                        )}
+                        {(request.status === 'PENDING' || request.status === 'SERVING') && (
+                          <button
+                            onClick={() => handleStatusUpdate(request, 'CANCELLED')}
+                            disabled={updatingRequestId === request.id}
+                            className="min-h-10 rounded-xl border border-red-300 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 disabled:text-slate-400"
+                          >
+                            Cancel
+                          </button>
+                        )}
+                        {request.status !== 'PENDING' && request.status !== 'SERVING' && (
+                          <span className="self-center text-sm text-slate-400">No action</span>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
               </div>
             )}
           </section>

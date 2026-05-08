@@ -87,6 +87,18 @@ const AdminDashboardPage = () => {
     openCounters: counters.filter(counter => counter.status === 'OPEN').length,
   }), [counters, requests]);
 
+  useEffect(() => {
+    if (!successMessage) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setSuccessMessage('');
+    }, 4000);
+
+    return () => window.clearTimeout(timer);
+  }, [successMessage]);
+
   const loadAdminData = useCallback(async (silent = false) => {
     if (!silent) {
       setIsLoading(true);
@@ -317,23 +329,27 @@ const AdminDashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <nav className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div>
-            <p className="text-sm font-semibold text-blue-700">QueueMS Admin</p>
-            <h1 className="text-lg font-bold">Superadmin Dashboard</h1>
+    <div className="qm-shell min-h-screen text-slate-900">
+      <nav className="qm-nav">
+        <div className="mx-auto flex h-16 w-full max-w-[1760px] items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <span className="qm-logo h-10 w-10"><span className="qm-logo-mark" /></span>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">QueueMS Admin</p>
+              <h1 className="text-lg font-bold">Superadmin Dashboard</h1>
+            </div>
           </div>
           <AccountMenu />
         </div>
       </nav>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-[1760px] px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm text-slate-600">
               Signed in as {user?.firstname} {user?.lastname} ({user?.email})
             </p>
+            <p className="qm-dot-text mt-2 text-3xl font-black">MANAGE. ROUTE. PREVENT.</p>
             <p className="text-sm text-slate-500">Role: {user?.role ?? 'SUPERADMIN'}</p>
           </div>
           <button
@@ -377,7 +393,7 @@ const AdminDashboardPage = () => {
         </section>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+          <section className="min-w-0 overflow-hidden rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5">
               <h2 className="text-xl font-bold">{editingCounterId ? 'Edit Counter' : 'Create Counter'}</h2>
               <p className="mt-1 text-sm text-slate-600">
@@ -436,7 +452,7 @@ const AdminDashboardPage = () => {
               </div>
 
               <div className="flex gap-3">
-                <Button type="submit" isLoading={isSavingCounter} className="bg-blue-700 hover:bg-blue-800">
+                <Button type="submit" isLoading={isSavingCounter} className="bg-stone-950 hover:bg-stone-800">
                   {editingCounterId ? 'Save Counter' : 'Create Counter'}
                 </Button>
                 {editingCounterId && (
@@ -506,7 +522,7 @@ const AdminDashboardPage = () => {
             </div>
           </section>
 
-          <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+          <section className="min-w-0 overflow-hidden rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5">
               <h2 className="text-xl font-bold">{editingUserId ? 'Edit User Account' : 'Create Staff Account'}</h2>
               <p className="mt-1 text-sm text-slate-600">
@@ -582,7 +598,7 @@ const AdminDashboardPage = () => {
                 </div>
               </div>
               <div className="flex gap-3">
-                <Button type="submit" isLoading={isSavingStaff} className="bg-blue-700 hover:bg-blue-800">
+                <Button type="submit" isLoading={isSavingStaff} className="bg-stone-950 hover:bg-stone-800">
                   {editingUserId ? 'Save User' : 'Create Staff Account'}
                 </Button>
                 {editingUserId && (
@@ -647,7 +663,7 @@ const AdminDashboardPage = () => {
           </section>
         </div>
 
-        <section className="mt-6 rounded-lg border border-slate-200 bg-white shadow-sm">
+        <section className="mt-6 min-w-0 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-200 px-6 py-5">
             <h2 className="text-xl font-bold">All Service Requests</h2>
             <p className="text-sm text-slate-600">Requests across every admin-managed counter.</p>
