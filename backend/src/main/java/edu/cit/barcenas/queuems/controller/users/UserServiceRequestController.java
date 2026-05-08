@@ -123,6 +123,22 @@ public class UserServiceRequestController {
         }
     }
 
+    @GetMapping("/{id}/position")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getRequestPosition(@PathVariable String id, Authentication authentication) {
+        try {
+            String uid = (String) authentication.getPrincipal();
+            return ResponseEntity.ok(service.getQueuePosition(id, uid));
+        } catch (Exception e) {
+            if (e.getMessage().contains("not found")) {
+                return ResponseEntity.notFound().build();
+            } else if (e.getMessage().contains("only view your own")) {
+                return ResponseEntity.status(403).body(e.getMessage());
+            }
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> cancelRequest(@PathVariable String id, Authentication authentication) {

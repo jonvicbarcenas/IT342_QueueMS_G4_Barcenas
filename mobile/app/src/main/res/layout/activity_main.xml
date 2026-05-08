@@ -4,25 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
+    android:background="@color/background"
     android:clipToPadding="false"
-    android:background="@color/white">
+    android:fillViewport="true"
+    tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="24dp">
+        android:padding="20dp">
 
-        <!-- Header -->
         <TextView
             android:id="@+id/tvHello"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hello,"
-            android:textColor="@color/text_primary"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,285 +29,229 @@
             android:id="@+id/tvUserName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="User!"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="12dp"
+            android:text="User"
             android:textColor="@color/text_primary"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:layout_marginStart="4dp"
-            app:layout_constraintEnd_toStartOf="@id/notificationIcon"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/tvHello"
-            app:layout_constraintTop_toTopOf="@id/tvHello" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/notificationIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="#F3F4F6"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:src="@android:drawable/ic_popup_reminder"
-                app:tint="@color/text_primary" />
-        </com.google.android.material.card.MaterialCardView>
-
-        <View
-            android:id="@+id/headerDivider"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="#E5E7EB"
-            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@id/btnNotifications"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvHello" />
 
-        <!-- Holiday Banner -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNotifications"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="0dp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="8dp"
+            app:icon="@android:drawable/ic_dialog_info"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="22dp"
+            app:iconTint="@color/text_primary"
+            app:layout_constraintEnd_toStartOf="@id/btnAccount"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/border" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAccount"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="8dp"
+            android:padding="0dp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="8dp"
+            app:icon="@android:drawable/ic_menu_manage"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="22dp"
+            app:iconTint="@color/text_primary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/border" />
+
+        <TextView
+            android:id="@+id/tvRoleEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvUserName"
+            tools:text="USER - juan@example.com" />
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/holidayBanner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="18dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="#FEF3C7"
             app:cardCornerRadius="8dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#C4C4C4"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/headerDivider">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvRoleEmail"
+            app:strokeColor="#F59E0B"
+            app:strokeWidth="1dp">
+
+            <TextView
+                android:id="@+id/tvHoliday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="14dp"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="Today is a public holiday. Bookings are disabled." />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/createCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/holidayBanner"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:padding="16dp">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/stat_sys_warning"
-                    app:tint="#D97706" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="New Service Request"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <Spinner
+                    android:id="@+id/spinnerCounters"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#F8FAFC" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilNotes"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="Notes">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etNotes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:inputType="textMultiLine"
+                        android:minLines="2"
+                        android:textColor="@color/text_primary" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvSelectedFile"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="Today is a Public Holiday — No bookings available"
-                    android:textColor="@color/text_primary"
-                    android:textSize="13sp"
+                    android:layout_marginTop="10dp"
+                    android:text="No supporting document selected"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPickDocument"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Attach Supporting Document"
+                    android:textAllCaps="false"
+                    app:cornerRadius="8dp"
+                    app:icon="@android:drawable/ic_menu_upload"
+                    app:strokeColor="@color/border" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCreateRequest"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="#1F2937"
+                    android:text="Create Request"
+                    android:textAllCaps="false"
                     android:textStyle="bold"
-                    android:gravity="center" />
+                    app:cornerRadius="8dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- My Queue Section -->
         <TextView
-            android:id="@+id/lblMyQueue"
-            android:layout_width="wrap_content"
+            android:id="@+id/lblActiveQueue"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="My Queue"
+            android:layout_marginTop="20dp"
+            android:text="Active Queue"
             android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/holidayBanner"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/createCard" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/queueCard"
+        <LinearLayout
+            android:id="@+id/activeQueueContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="#F9FAFB"
-            app:strokeColor="#E5E7EB"
-            app:strokeWidth="1dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lblMyQueue">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lblActiveQueue" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/tvTicketNumber"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Q-042"
-                    android:textColor="@color/text_primary"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnDocuments"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:padding="0dp"
-                    android:text="Documents"
-                    android:textAllCaps="false"
-                    android:textSize="12sp"
-                    android:textColor="@color/text_primary"
-                    app:icon="@android:drawable/ic_menu_agenda"
-                    app:iconPadding="4dp"
-                    app:iconSize="16dp"
-                    app:iconTint="@color/text_secondary"
-                    app:strokeColor="#E5E7EB"
-                    app:cornerRadius="4dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/lblCounter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Counter: "
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    app:layout_constraintTop_toBottomOf="@id/tvTicketNumber"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvCounterName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Counter 1 - Registrar"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/lblCounter"
-                    app:layout_constraintStart_toEndOf="@id/lblCounter" />
-
-                <TextView
-                    android:id="@+id/lblService"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Service: "
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    app:layout_constraintTop_toBottomOf="@id/lblCounter"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvServiceName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Document Request"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/lblService"
-                    app:layout_constraintStart_toEndOf="@id/lblService" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="4dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="@color/pending_bg"
-                    app:layout_constraintTop_toBottomOf="@id/lblService"
-                    app:layout_constraintStart_toStartOf="parent">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="4dp"
-                        android:text="PENDING"
-                        android:textColor="@color/pending_text"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-                </com.google.android.material.card.MaterialCardView>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Position Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/positionCard"
+        <TextView
+            android:id="@+id/lblHistory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="#E5E5E5"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="20dp"
+            android:text="My Requests"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/queueCard">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activeQueueContainer" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="24dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Position #3 in queue"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="3 of 8"
-                    android:textColor="@color/text_primary"
-                    android:textSize="36sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.progressindicator.LinearProgressIndicator
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:progress="37"
-                    app:trackThickness="8dp"
-                    app:trackCornerRadius="4dp"
-                    app:trackColor="#C4C4C4"
-                    app:indicatorColor="#6B7280" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="2 people ahead of you"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Logout (Temporary for Phase 2) -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLogout"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/requestListContainer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="24dp"
-            android:text="Logout"
-            android:textColor="@color/error"
-            android:textAllCaps="false"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/positionCard" />
+            app:layout_constraintTop_toBottomOf="@id/lblHistory" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

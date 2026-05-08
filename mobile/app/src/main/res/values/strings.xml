@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">QueueMS</string>
+    <string name="default_notification_channel_id">queue_updates</string>
 </resources>

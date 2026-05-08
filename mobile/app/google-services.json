@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "685018786282",
+    "project_id": "queuems-4912a",
+    "storage_bucket": "queuems-4912a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685018786282:android:4e7d8c3d7c4e9924366a93",
+        "android_client_info": {
+          "package_name": "edu.cit.barcenas.queuems"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsl6JJ5dv9D43KFapcXhnR-z0Av_aooj8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

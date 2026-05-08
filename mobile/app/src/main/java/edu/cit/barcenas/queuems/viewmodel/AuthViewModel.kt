@@ -10,6 +10,8 @@ import edu.cit.barcenas.queuems.api.model.RegisterRequest
 import edu.cit.barcenas.queuems.api.model.UserProfile
 import edu.cit.barcenas.queuems.repository.AuthRepository
 import kotlinx.coroutines.launch
+import java.net.ConnectException
+import java.net.SocketTimeoutException
 import retrofit2.Response
 
 sealed class AuthState<out T> {
@@ -42,7 +44,7 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
                     _registerState.value = AuthState.Error(errorBody)
                 }
             } catch (e: Exception) {
-                _registerState.value = AuthState.Error(e.message ?: "An error occurred")
+                _registerState.value = AuthState.Error(toAuthErrorMessage(e))
             }
         }
     }
@@ -59,7 +61,7 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
                     _loginState.value = AuthState.Error(errorBody)
                 }
             } catch (e: Exception) {
-                _loginState.value = AuthState.Error(e.message ?: "An error occurred")
+                _loginState.value = AuthState.Error(toAuthErrorMessage(e))
             }
         }
     }
@@ -75,8 +77,16 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
                     _userProfileState.value = AuthState.Error("Failed to fetch profile")
                 }
             } catch (e: Exception) {
-                _userProfileState.value = AuthState.Error(e.message ?: "An error occurred")
+                _userProfileState.value = AuthState.Error(toAuthErrorMessage(e))
             }
+        }
+    }
+
+    private fun toAuthErrorMessage(error: Exception): String {
+        return when (error) {
+            is ConnectException -> "Cannot reach QueueMS backend. Check that the backend is running and the mobile API base URL is correct."
+            is SocketTimeoutException -> "QueueMS backend timed out. Check your network and backend server."
+            else -> error.message ?: "An error occurred"
         }
     }
 }

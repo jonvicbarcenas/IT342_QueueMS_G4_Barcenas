@@ -1,5 +1,7 @@
 package edu.cit.barcenas.queuems.ui.register
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -57,7 +59,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         binding.btnGoogle.setOnClickListener {
-            Toast.makeText(this, "Google Sign-up coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("${RetrofitClient.BASE_URL}oauth2/authorization/google")))
         }
 
         binding.tvLoginLink.setOnClickListener {

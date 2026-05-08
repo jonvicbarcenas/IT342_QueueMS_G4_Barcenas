@@ -1,5 +1,7 @@
 package edu.cit.barcenas.queuems.service;
 
+import com.google.firebase.messaging.AndroidConfig;
+import com.google.firebase.messaging.AndroidNotification;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -18,6 +20,16 @@ public class FcmService {
                             .setTitle(title)
                             .setBody(body)
                             .build())
+                    .setAndroidConfig(AndroidConfig.builder()
+                            .setPriority(AndroidConfig.Priority.HIGH)
+                            .setNotification(AndroidNotification.builder()
+                                    .setChannelId("queue_updates")
+                                    .setTitle(title)
+                                    .setBody(body)
+                                    .build())
+                            .build())
+                    .putData("title", title)
+                    .putData("body", body)
                     .build();
 
             String response = FirebaseMessaging.getInstance().send(message);
