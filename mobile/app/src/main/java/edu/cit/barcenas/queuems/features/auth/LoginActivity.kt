@@ -1,4 +1,4 @@
-package edu.cit.barcenas.queuems.ui.login
+package edu.cit.barcenas.queuems.features.auth
 
 import android.content.Intent
 import android.net.Uri
@@ -7,16 +7,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import edu.cit.barcenas.queuems.MainActivity
+import edu.cit.barcenas.queuems.features.requests.MainActivity
 import edu.cit.barcenas.queuems.api.RetrofitClient
 import edu.cit.barcenas.queuems.api.model.LoginRequest
 import edu.cit.barcenas.queuems.databinding.ActivityLoginBinding
-import edu.cit.barcenas.queuems.repository.AuthRepository
-import edu.cit.barcenas.queuems.ui.register.RegisterActivity
-import edu.cit.barcenas.queuems.utils.SessionManager
-import edu.cit.barcenas.queuems.viewmodel.AuthState
-import edu.cit.barcenas.queuems.viewmodel.AuthViewModel
-import edu.cit.barcenas.queuems.viewmodel.AuthViewModelFactory
+import edu.cit.barcenas.queuems.shared.session.SessionManager
 
 class LoginActivity : AppCompatActivity() {
 

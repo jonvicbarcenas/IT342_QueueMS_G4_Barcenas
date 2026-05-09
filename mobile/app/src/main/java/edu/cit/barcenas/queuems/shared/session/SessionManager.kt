@@ -1,4 +1,4 @@
-package edu.cit.barcenas.queuems.utils
+package edu.cit.barcenas.queuems.shared.session
 
 import android.content.Context
 import android.content.SharedPreferences

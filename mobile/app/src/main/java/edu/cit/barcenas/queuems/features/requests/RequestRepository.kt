@@ -1,4 +1,4 @@
-package edu.cit.barcenas.queuems.repository
+package edu.cit.barcenas.queuems.features.requests
 
 import edu.cit.barcenas.queuems.api.ApiService
 import edu.cit.barcenas.queuems.api.model.Counter

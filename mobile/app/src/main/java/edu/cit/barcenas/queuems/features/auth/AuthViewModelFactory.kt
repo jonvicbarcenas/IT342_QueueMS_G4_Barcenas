@@ -1,8 +1,7 @@
-package edu.cit.barcenas.queuems.viewmodel
+package edu.cit.barcenas.queuems.features.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import edu.cit.barcenas.queuems.repository.AuthRepository
 
 class AuthViewModelFactory(private val repository: AuthRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -7,7 +7,7 @@
     android:background="@drawable/bg_app_pattern"
     android:clipToPadding="false"
     android:fillViewport="true"
-    tools:context=".MainActivity">
+    tools:context=".features.requests.MainActivity">
 
     <LinearLayout
         android:id="@+id/main"

@@ -1,4 +1,4 @@
-package edu.cit.barcenas.queuems.ui.register
+package edu.cit.barcenas.queuems.features.auth
 
 import android.content.Intent
 import android.net.Uri
@@ -10,10 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import edu.cit.barcenas.queuems.api.RetrofitClient
 import edu.cit.barcenas.queuems.api.model.RegisterRequest
 import edu.cit.barcenas.queuems.databinding.ActivityRegisterBinding
-import edu.cit.barcenas.queuems.repository.AuthRepository
-import edu.cit.barcenas.queuems.viewmodel.AuthState
-import edu.cit.barcenas.queuems.viewmodel.AuthViewModel
-import edu.cit.barcenas.queuems.viewmodel.AuthViewModelFactory
 
 class RegisterActivity : AppCompatActivity() {
 

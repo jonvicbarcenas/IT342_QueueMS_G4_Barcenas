@@ -1,4 +1,4 @@
-package edu.cit.barcenas.queuems.service
+package edu.cit.barcenas.queuems.features.notifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -12,10 +12,10 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import edu.cit.barcenas.queuems.api.RetrofitClient
-import edu.cit.barcenas.queuems.repository.AuthRepository
-import edu.cit.barcenas.queuems.MainActivity
+import edu.cit.barcenas.queuems.features.auth.AuthRepository
+import edu.cit.barcenas.queuems.features.requests.MainActivity
 import edu.cit.barcenas.queuems.R
-import edu.cit.barcenas.queuems.utils.SessionManager
+import edu.cit.barcenas.queuems.shared.session.SessionManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package edu.cit.barcenas.queuems.viewmodel
+package edu.cit.barcenas.queuems.features.auth
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,7 +8,6 @@ import edu.cit.barcenas.queuems.api.model.AuthResponse
 import edu.cit.barcenas.queuems.api.model.LoginRequest
 import edu.cit.barcenas.queuems.api.model.RegisterRequest
 import edu.cit.barcenas.queuems.api.model.UserProfile
-import edu.cit.barcenas.queuems.repository.AuthRepository
 import kotlinx.coroutines.launch
 import java.net.ConnectException
 import java.net.SocketTimeoutException

@@ -1,4 +1,4 @@
-package edu.cit.barcenas.queuems
+package edu.cit.barcenas.queuems.features.requests
 
 import android.Manifest
 import android.app.AlertDialog
@@ -26,6 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.firebase.messaging.FirebaseMessaging
+import edu.cit.barcenas.queuems.R
 import edu.cit.barcenas.queuems.api.RetrofitClient
 import edu.cit.barcenas.queuems.api.model.Counter
 import edu.cit.barcenas.queuems.api.model.CreateServiceRequest
@@ -34,11 +35,9 @@ import edu.cit.barcenas.queuems.api.model.ServiceRequest
 import edu.cit.barcenas.queuems.api.model.UpdateProfileRequest
 import edu.cit.barcenas.queuems.api.model.UserProfile
 import edu.cit.barcenas.queuems.databinding.ActivityMainBinding
-import edu.cit.barcenas.queuems.repository.AuthRepository
-import edu.cit.barcenas.queuems.repository.RequestRepository
-import edu.cit.barcenas.queuems.service.QueueRealtimeClient
-import edu.cit.barcenas.queuems.ui.login.LoginActivity
-import edu.cit.barcenas.queuems.utils.SessionManager
+import edu.cit.barcenas.queuems.features.auth.AuthRepository
+import edu.cit.barcenas.queuems.features.auth.LoginActivity
+import edu.cit.barcenas.queuems.shared.session.SessionManager
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody

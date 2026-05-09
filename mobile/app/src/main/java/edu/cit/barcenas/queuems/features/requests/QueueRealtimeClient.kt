@@ -1,4 +1,4 @@
-package edu.cit.barcenas.queuems.service
+package edu.cit.barcenas.queuems.features.requests
 
 import edu.cit.barcenas.queuems.api.RetrofitClient
 import okhttp3.OkHttpClient
