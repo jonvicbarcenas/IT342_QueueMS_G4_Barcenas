@@ -1,0 +1,124 @@
+- navigation:
+  - paragraph: QueueMS Teller
+  - heading "Counter Queue Dashboard" [level=1]
+  - button "RT Random Teller 1 TELLER v":
+    - generic: RT
+    - generic: Random Teller 1
+    - generic: TELLER
+    - generic: v
+- main:
+  - paragraph: Signed in as Random Teller 1 (teller1@gmail.com)
+  - paragraph: SERVE. UPDATE. PREVENT.
+  - paragraph: "Role: TELLER"
+  - button "Refresh Queue"
+  - complementary:
+    - paragraph: Assigned Counter
+    - heading "Registrar Window 1" [level=2]
+    - paragraph: Enrollment
+    - generic: OPEN
+    - button "Close Counter"
+    - heading "Queue Summary" [level=2]
+    - paragraph: Total
+    - paragraph: "7"
+    - paragraph: Pending
+    - paragraph: "0"
+    - paragraph: Serving
+    - paragraph: "0"
+    - paragraph: Completed
+    - paragraph: "6"
+  - heading "Assigned Requests" [level=2]
+  - paragraph: Requests submitted to your assigned counter.
+  - button "Serve Next" [disabled]
+  - article:
+    - paragraph: Queue
+    - paragraph: Q007
+    - paragraph: Service
+    - paragraph: Enrollment
+    - paragraph: "Note: lolskie"
+    - paragraph: Status
+    - generic: COMPLETED
+    - paragraph: Document
+    - text: No document
+    - paragraph: Created
+    - paragraph: May 8, 2026, 5:17 PM
+    - generic: No action
+  - article:
+    - paragraph: Queue
+    - paragraph: Q006
+    - paragraph: Service
+    - paragraph: Enrollment
+    - paragraph: "Note: lolskie"
+    - paragraph: Status
+    - generic: COMPLETED
+    - paragraph: Document
+    - text: No document
+    - paragraph: Created
+    - paragraph: May 8, 2026, 4:48 PM
+    - generic: No action
+  - article:
+    - paragraph: Queue
+    - paragraph: Q005
+    - paragraph: Service
+    - paragraph: Enrollment
+    - paragraph: "Note: testung"
+    - paragraph: Status
+    - generic: COMPLETED
+    - paragraph: Document
+    - button "View Document"
+    - paragraph: received_1197383132331061.jpeg
+    - paragraph: Created
+    - paragraph: May 8, 2026, 4:18 PM
+    - generic: No action
+  - article:
+    - paragraph: Queue
+    - paragraph: Q004
+    - paragraph: Service
+    - paragraph: Enrollment
+    - paragraph: "Note: testtt"
+    - paragraph: Status
+    - generic: COMPLETED
+    - paragraph: Document
+    - text: No document
+    - paragraph: Created
+    - paragraph: May 8, 2026, 4:10 PM
+    - generic: No action
+  - article:
+    - paragraph: Queue
+    - paragraph: Q003
+    - paragraph: Service
+    - paragraph: Enrollment
+    - paragraph: "Note: tesy"
+    - paragraph: Status
+    - generic: COMPLETED
+    - paragraph: Document
+    - text: No document
+    - paragraph: Created
+    - paragraph: May 8, 2026, 3:43 PM
+    - generic: No action
+  - article:
+    - paragraph: Queue
+    - paragraph: Q002
+    - paragraph: Service
+    - paragraph: Enrollment
+    - paragraph: "Note: test"
+    - paragraph: Status
+    - generic: COMPLETED
+    - paragraph: Document
+    - text: No document
+    - paragraph: Created
+    - paragraph: Apr 28, 2026, 8:05 PM
+    - generic: No action
+  - article:
+    - paragraph: Queue
+    - paragraph: Q001
+    - paragraph: Service
+    - paragraph: Enrollment
+    - paragraph: "Note: test"
+    - paragraph: Status
+    - generic: CANCELLED
+    - paragraph: Document
+    - button "View Document"
+    - paragraph: Screenshot (2).png
+    - paragraph: Created
+    - paragraph: Apr 28, 2026, 8:03 PM
+    - generic: No action

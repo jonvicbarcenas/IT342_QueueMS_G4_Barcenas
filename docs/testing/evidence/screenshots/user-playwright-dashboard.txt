@@ -1,0 +1,106 @@
+QUEUEMS
+
+Service Request Dashboard
+JB
+Jon Vic Barcenas
+USER
+v
+
+Signed in as Jon Vic Barcenas (humbamanok1@gmail.com)
+
+REQUEST. TRACK. PREVENT.
+
+Role: USER
+
+Create Service Request
+
+Choose the office you need and get your queue number.
+
+Service Counter
+Select a counter
+Registrar Window 1 - Enrollment
+NOTES
+Supporting Document
+
+Accepted files: PDF, JPG, PNG, or WEBP up to 5 MB.
+
+Create Queue Request
+Request Summary
+
+TOTAL
+
+7
+
+PENDING
+
+0
+
+SERVING
+
+0
+
+COMPLETED
+
+6
+
+Next Step
+
+Keep this page open and watch your request status. Cancel is available while the request is still pending.
+
+My Requests
+
+Your queue numbers and current service status.
+
+Refresh
+QUEUE NO.	COUNTER	SERVICE	STATUS	CREATED	ACTION
+Q007	Registrar Window 1	Enrollment
+
+Teller: Random Teller 1
+
+Note: lolskie
+
+	Completed	May 8, 2026, 5:17 PM	No action
+Q006	Registrar Window 1	Enrollment
+
+Teller: Random Teller 1
+
+Note: lolskie
+
+	Completed	May 8, 2026, 4:48 PM	No action
+Q005	Registrar Window 1	Enrollment
+
+Teller: Random Teller 1
+
+Note: testung
+
+received_1197383132331061.jpeg
+	Completed	May 8, 2026, 4:18 PM	No action
+Q004	Registrar Window 1	Enrollment
+
+Teller: Random Teller 1
+
+Note: testtt
+
+	Completed	May 8, 2026, 4:10 PM	No action
+Q003	Registrar Window 1	Enrollment
+
+Teller: Random Teller 1
+
+Note: tesy
+
+	Completed	May 8, 2026, 3:43 PM	No action
+Q002	Registrar Window 1	Enrollment
+
+Teller: Random Teller 1
+
+Note: test
+
+	Completed	Apr 28, 2026, 8:05 PM	No action
+Q001	Registrar Window 1	Enrollment
+
+Teller: Random Teller 1
+
+Note: test
+
+Screenshot (2).png
+	Cancelled	Apr 28, 2026, 8:03 PM	No action
