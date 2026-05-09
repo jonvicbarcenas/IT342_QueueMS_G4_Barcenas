@@ -1,9 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
-import type { User, AuthState, LoginRequest, RegisterRequest, UpdateProfileRequest } from '@/types/auth';
-import { authService } from '@services/authService';
-import { setAuthToken, removeAuthToken, getAuthToken } from '@services/api';
+import type { User, AuthState, LoginRequest, RegisterRequest, UpdateProfileRequest } from '@/features/auth/auth';
+import { authService } from '@/features/auth/authService';
+import { setAuthToken, removeAuthToken, getAuthToken } from '@/shared/api/api';
 
 const USER_KEY = 'authUser';
 

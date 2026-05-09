@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
-import { useAuth } from '@/context';
+import { useAuth } from '@/features/auth';
 import { AccountMenu, Button, Input } from '@components/common';
-import { adminService } from '@services/admin/adminService';
-import { webSocketService } from '@services/websocketService';
+import { adminService } from '@/features/admin/adminService';
+import { webSocketService } from '@/shared/realtime/websocketService';
 import type {
   AdminCounter,
   AdminCounterPayload,
@@ -12,7 +12,7 @@ import type {
   AdminStaffUserPayload,
   AdminUser,
   CounterStatus,
-} from '@/types/admin/admin';
+} from '@/features/admin/admin';
 
 const STATUS_STYLES: Record<string, string> = {
   OPEN: 'bg-green-50 text-green-700 border-green-200',

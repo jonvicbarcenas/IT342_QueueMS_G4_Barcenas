@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '@/context';
+import { AuthProvider } from '@/features/auth';
 import { ErrorBoundary, ProtectedRoute } from '@components/common';
 import {
   AdminDashboardPage,

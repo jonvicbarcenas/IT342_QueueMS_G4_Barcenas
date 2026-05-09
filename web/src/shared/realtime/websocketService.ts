@@ -1,7 +1,7 @@
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import type { Client, Subscription } from 'stompjs';
-import { api } from './api';
+import { api } from '@/shared/api/api';
 
 class WebSocketService {
   private client: Client | null = null;
@@ -63,7 +63,10 @@ class WebSocketService {
   /**
    * Subscribe to a topic
    */
-  public subscribe(topic: string, callback: (message: any) => void): Subscription | null {
+  public subscribe<TMessage = unknown>(
+    topic: string,
+    callback: (message: TMessage) => void
+  ): Subscription | null {
     if (!this.client || !this.connected) {
       console.warn('WebSocket not connected. Unable to subscribe.');
       return null;
@@ -71,7 +74,7 @@ class WebSocketService {
 
     const subscription = this.client.subscribe(topic, (message) => {
       try {
-        callback(JSON.parse(message.body));
+        callback(JSON.parse(message.body) as TMessage);
       } catch (error) {
         console.error('Failed to handle WebSocket message:', error);
       }

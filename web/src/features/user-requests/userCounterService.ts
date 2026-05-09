@@ -1,5 +1,5 @@
-import { api } from '@services/api';
-import type { UserCounter } from '@/types/users/userCounter';
+import { api } from '@/shared/api/api';
+import type { UserCounter } from '@/features/user-requests/userCounter';
 
 const COUNTER_ENDPOINTS = {
   BASE: '/api/counters',

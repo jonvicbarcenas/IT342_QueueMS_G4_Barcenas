@@ -1,2 +1,2 @@
-// Export all context providers
-export { AuthProvider, useAuth } from './AuthContext';
+// Compatibility export for the auth feature slice.
+export { AuthProvider, useAuth } from '@/features/auth';

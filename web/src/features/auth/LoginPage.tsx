@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context';
+import { useAuth } from '@/features/auth';
 import { Button, Input } from '@components/common';
-import { authService } from '@services/authService';
+import { authService } from '@/features/auth/authService';
 
 const LoginPage = () => {
   const navigate = useNavigate();

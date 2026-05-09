@@ -1,11 +1,11 @@
-import { api } from '@services/api';
+import { api } from '@/shared/api/api';
 import type {
   AdminCounter,
   AdminCounterPayload,
   AdminServiceRequest,
   AdminStaffUserPayload,
   AdminUser,
-} from '@/types/admin/admin';
+} from '@/features/admin/admin';
 
 const ADMIN_ENDPOINTS = {
   COUNTERS: '/api/admin/counters',

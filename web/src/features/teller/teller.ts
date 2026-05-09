@@ -1,5 +1,5 @@
-import type { UserCounter } from '@/types/users/userCounter';
-import type { UserServiceRequest, UserServiceRequestStatus } from '@/types/users/userServiceRequest';
+import type { UserCounter } from '@/features/user-requests/userCounter';
+import type { UserServiceRequest, UserServiceRequestStatus } from '@/features/user-requests/userServiceRequest';
 
 export type TellerCounter = UserCounter;
 export type TellerServiceRequest = UserServiceRequest;

@@ -1,7 +1,7 @@
-import { useAuth } from '@/context';
-import AdminDashboardPage from './admin/AdminDashboardPage';
-import TellerDashboardPage from './teller/TellerDashboardPage';
-import UserDashboardPage from './users/UserDashboardPage';
+import { useAuth } from '@/features/auth';
+import AdminDashboardPage from '@/features/admin/AdminDashboardPage';
+import TellerDashboardPage from '@/features/teller/TellerDashboardPage';
+import UserDashboardPage from '@/features/user-requests/UserDashboardPage';
 
 const DashboardRouterPage = () => {
   const { user } = useAuth();

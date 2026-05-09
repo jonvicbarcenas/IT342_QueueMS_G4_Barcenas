@@ -1,4 +1,4 @@
-import type { UserServiceRequest } from '@/types/users/userServiceRequest';
+import type { UserServiceRequest } from '@/features/user-requests/userServiceRequest';
 
 export type CounterStatus = 'OPEN' | 'CLOSED';
 export type AdminRole = 'USER' | 'TELLER' | 'SUPERADMIN';

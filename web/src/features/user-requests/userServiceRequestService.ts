@@ -1,9 +1,9 @@
-import { api } from '../api';
+import { api } from '@/shared/api/api';
 import type {
   CreateUserServiceRequestPayload,
   HolidayStatus,
   UserServiceRequest,
-} from '@/types/users/userServiceRequest';
+} from '@/features/user-requests/userServiceRequest';
 
 const REQUEST_ENDPOINTS = {
   BASE: '/api/requests',

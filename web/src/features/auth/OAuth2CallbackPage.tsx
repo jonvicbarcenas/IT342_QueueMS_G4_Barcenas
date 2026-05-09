@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '@/context';
+import { useAuth } from '@/features/auth';
 
 const OAuth2CallbackPage = () => {
   const [searchParams] = useSearchParams();

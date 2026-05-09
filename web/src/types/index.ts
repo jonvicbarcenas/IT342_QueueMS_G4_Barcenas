@@ -1,6 +1,6 @@
-// Global TypeScript types and interfaces
-export * from './auth';
-export * from './admin/admin';
-export * from './teller/teller';
-export * from './users/userCounter';
-export * from './users/userServiceRequest';
+// Compatibility export for feature-owned types.
+export * from '@/features/auth/auth';
+export * from '@/features/admin/admin';
+export * from '@/features/teller/teller';
+export * from '@/features/user-requests/userCounter';
+export * from '@/features/user-requests/userServiceRequest';

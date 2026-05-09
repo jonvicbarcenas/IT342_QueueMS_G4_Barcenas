@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
-import { useAuth } from '@/context';
+import { useAuth } from '@/features/auth';
 import { AccountMenu, Button, Input } from '@components/common';
-import { userCounterService } from '@services/users/userCounterService';
-import { userServiceRequestService } from '@services/users/userServiceRequestService';
-import { webSocketService } from '@services/websocketService';
+import { userCounterService } from '@/features/user-requests/userCounterService';
+import { userServiceRequestService } from '@/features/user-requests/userServiceRequestService';
+import { webSocketService } from '@/shared/realtime/websocketService';
 import type {
   CreateUserServiceRequestPayload,
   HolidayStatus,
   UserServiceRequest,
   UserServiceRequestStatus,
-} from '@/types/users/userServiceRequest';
-import type { UserCounter } from '@/types/users/userCounter';
+} from '@/features/user-requests/userServiceRequest';
+import type { UserCounter } from '@/features/user-requests/userCounter';
 
 const STATUS_LABELS: Record<UserServiceRequestStatus, string> = {
   PENDING: 'Pending',

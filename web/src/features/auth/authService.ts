@@ -1,6 +1,6 @@
 // Authentication API service
-import type { LoginRequest, RegisterRequest, UpdateProfileRequest, AuthResponse, User } from '@/types/auth';
-import { api } from './api';
+import type { LoginRequest, RegisterRequest, UpdateProfileRequest, AuthResponse, User } from '@/features/auth/auth';
+import { api } from '@/shared/api/api';
 
 const AUTH_ENDPOINTS = {
   LOGIN: `/api/auth/login`,

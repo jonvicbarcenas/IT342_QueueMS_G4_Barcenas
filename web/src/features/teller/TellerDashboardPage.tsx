@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAuth } from '@/context';
+import { useAuth } from '@/features/auth';
 import { AccountMenu } from '@components/common';
-import { tellerService } from '@services/teller/tellerService';
-import { webSocketService } from '@services/websocketService';
-import type { TellerCounter, TellerRequestStatus, TellerServiceRequest } from '@/types/teller/teller';
+import { tellerService } from '@/features/teller/tellerService';
+import { webSocketService } from '@/shared/realtime/websocketService';
+import type { TellerCounter, TellerRequestStatus, TellerServiceRequest } from '@/features/teller/teller';
 
 const STATUS_STYLES: Record<string, string> = {
   OPEN: 'bg-green-50 text-green-700 border-green-200',

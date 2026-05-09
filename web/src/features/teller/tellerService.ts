@@ -1,10 +1,10 @@
-import { api } from '@services/api';
+import { api } from '@/shared/api/api';
 import type {
   TellerCounter,
   TellerCounterStatusPayload,
   TellerRequestStatusPayload,
   TellerServiceRequest,
-} from '@/types/teller/teller';
+} from '@/features/teller/teller';
 
 const TELLER_ENDPOINTS = {
   COUNTER: '/api/teller/counter',
