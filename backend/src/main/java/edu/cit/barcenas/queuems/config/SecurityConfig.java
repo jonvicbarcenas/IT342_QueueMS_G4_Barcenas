@@ -1,7 +1,7 @@
 package edu.cit.barcenas.queuems.config;
 
 import edu.cit.barcenas.queuems.model.Role;
-import edu.cit.barcenas.queuems.service.OAuth2SuccessHandler;
+import edu.cit.barcenas.queuems.feature.auth.OAuth2SuccessHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
