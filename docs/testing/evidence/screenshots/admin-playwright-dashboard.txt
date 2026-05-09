@@ -1,0 +1,154 @@
+QUEUEMS ADMIN
+
+Superadmin Dashboard
+IA
+I am Admin
+SUPERADMIN
+v
+
+Signed in as I am Admin (humbamanok2@gmail.com)
+
+MANAGE. ROUTE. PREVENT.
+
+Role: SUPERADMIN
+
+Refresh Dashboard
+
+ALL REQUESTS
+
+7
+
+PENDING
+
+0
+
+SERVING
+
+0
+
+OPEN COUNTERS
+
+1
+
+Create Counter
+
+Service requests use these counter records and teller assignments.
+
+COUNTER NAME
+SERVICE TYPE
+Status
+Open
+Closed
+Assigned Teller
+No teller
+Random Teller 1
+Create Counter
+COUNTER	TELLER	STATUS	ACTION
+
+
+Registrar Window 1
+
+Enrollment
+
+	Random Teller 1	OPEN	
+Edit
+Delete
+Create Staff Account
+
+Tellers can be assigned to counters from this form or from counter editing.
+
+FIRST NAME
+LAST NAME
+EMAIL
+TEMPORARY PASSWORD
+Role
+Teller
+Superadmin
+Counter
+No counter
+Registrar Window 1
+Create Staff Account
+USER	ROLE	COUNTER	ACTION
+
+
+Jon Vic Barcenas
+
+humbamanok1@gmail.com
+
+	USER	None	
+Edit
+Delete
+
+
+
+I am Admin
+
+humbamanok2@gmail.com
+
+	SUPERADMIN	None	
+Edit
+Delete
+
+
+
+Random Teller 1
+
+teller1@gmail.com
+
+	TELLER	Registrar Window 1	
+Edit
+Delete
+All Service Requests
+
+Requests across every admin-managed counter.
+
+QUEUE NO.	COUNTER	TELLER	STATUS	CREATED
+Q007	
+
+Registrar Window 1
+
+Enrollment
+
+	Random Teller 1	COMPLETED	May 8, 2026, 5:17 PM
+Q006	
+
+Registrar Window 1
+
+Enrollment
+
+	Random Teller 1	COMPLETED	May 8, 2026, 4:48 PM
+Q005	
+
+Registrar Window 1
+
+Enrollment
+
+	Random Teller 1	COMPLETED	May 8, 2026, 4:18 PM
+Q004	
+
+Registrar Window 1
+
+Enrollment
+
+	Random Teller 1	COMPLETED	May 8, 2026, 4:10 PM
+Q003	
+
+Registrar Window 1
+
+Enrollment
+
+	Random Teller 1	COMPLETED	May 8, 2026, 3:43 PM
+Q002	
+
+Registrar Window 1
+
+Enrollment
+
+	Random Teller 1	COMPLETED	Apr 28, 2026, 8:05 PM
+Q001	
+
+Registrar Window 1
+
+Enrollment
+
+	Random Teller 1	CANCELLED	Apr 28, 2026, 8:03 PM

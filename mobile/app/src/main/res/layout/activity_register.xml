@@ -7,7 +7,7 @@
     android:background="@drawable/bg_app_pattern"
     android:clipToPadding="false"
     android:fillViewport="true"
-    tools:context=".ui.register.RegisterActivity">
+    tools:context=".features.auth.RegisterActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

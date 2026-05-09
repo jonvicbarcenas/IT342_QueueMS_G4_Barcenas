@@ -1,0 +1,128 @@
+- navigation:
+  - paragraph: QueueMS
+  - heading "Service Request Dashboard" [level=1]
+  - button "JB Jon Vic Barcenas USER v":
+    - generic: JB
+    - generic: Jon Vic Barcenas
+    - generic: USER
+    - generic: v
+- main:
+  - paragraph: Signed in as Jon Vic Barcenas (humbamanok1@gmail.com)
+  - paragraph: REQUEST. TRACK. PREVENT.
+  - paragraph: "Role: USER"
+  - heading "Create Service Request" [level=2]
+  - paragraph: Choose the office you need and get your queue number.
+  - generic: Service Counter
+  - combobox "Service Counter":
+    - option "Select a counter" [selected]
+    - option "Registrar Window 1 - Enrollment"
+  - generic: Notes
+  - textbox "Optional request notes"
+  - generic: Supporting Document
+  - button "Supporting Document"
+  - paragraph: "Accepted files: PDF, JPG, PNG, or WEBP up to 5 MB."
+  - button "Create Queue Request"
+  - complementary:
+    - heading "Request Summary" [level=2]
+    - paragraph: Total
+    - paragraph: "7"
+    - paragraph: Pending
+    - paragraph: "0"
+    - paragraph: Serving
+    - paragraph: "0"
+    - paragraph: Completed
+    - paragraph: "6"
+    - heading "Next Step" [level=2]
+    - paragraph: Keep this page open and watch your request status. Cancel is available while the request is still pending.
+  - heading "My Requests" [level=2]
+  - paragraph: Your queue numbers and current service status.
+  - button "Refresh"
+  - table:
+    - rowgroup:
+      - row "Queue No. Counter Service Status Created Action":
+        - columnheader "Queue No."
+        - columnheader "Counter"
+        - columnheader "Service"
+        - columnheader "Status"
+        - columnheader "Created"
+        - columnheader "Action"
+    - rowgroup:
+      - 'row "Q007 Registrar Window 1 Enrollment Teller: Random Teller 1 Note: lolskie Completed May 8, 2026, 5:17 PM No action"':
+        - cell "Q007"
+        - cell "Registrar Window 1"
+        - 'cell "Enrollment Teller: Random Teller 1 Note: lolskie"':
+          - text: Enrollment
+          - paragraph: "Teller: Random Teller 1"
+          - paragraph: "Note: lolskie"
+        - cell "Completed":
+          - generic: Completed
+        - cell "May 8, 2026, 5:17 PM"
+        - cell "No action"
+      - 'row "Q006 Registrar Window 1 Enrollment Teller: Random Teller 1 Note: lolskie Completed May 8, 2026, 4:48 PM No action"':
+        - cell "Q006"
+        - cell "Registrar Window 1"
+        - 'cell "Enrollment Teller: Random Teller 1 Note: lolskie"':
+          - text: Enrollment
+          - paragraph: "Teller: Random Teller 1"
+          - paragraph: "Note: lolskie"
+        - cell "Completed":
+          - generic: Completed
+        - cell "May 8, 2026, 4:48 PM"
+        - cell "No action"
+      - 'row "Q005 Registrar Window 1 Enrollment Teller: Random Teller 1 Note: testung received_1197383132331061.jpeg Completed May 8, 2026, 4:18 PM No action"':
+        - cell "Q005"
+        - cell "Registrar Window 1"
+        - 'cell "Enrollment Teller: Random Teller 1 Note: testung received_1197383132331061.jpeg"':
+          - text: Enrollment
+          - paragraph: "Teller: Random Teller 1"
+          - paragraph: "Note: testung"
+          - button "received_1197383132331061.jpeg"
+        - cell "Completed":
+          - generic: Completed
+        - cell "May 8, 2026, 4:18 PM"
+        - cell "No action"
+      - 'row "Q004 Registrar Window 1 Enrollment Teller: Random Teller 1 Note: testtt Completed May 8, 2026, 4:10 PM No action"':
+        - cell "Q004"
+        - cell "Registrar Window 1"
+        - 'cell "Enrollment Teller: Random Teller 1 Note: testtt"':
+          - text: Enrollment
+          - paragraph: "Teller: Random Teller 1"
+          - paragraph: "Note: testtt"
+        - cell "Completed":
+          - generic: Completed
+        - cell "May 8, 2026, 4:10 PM"
+        - cell "No action"
+      - 'row "Q003 Registrar Window 1 Enrollment Teller: Random Teller 1 Note: tesy Completed May 8, 2026, 3:43 PM No action"':
+        - cell "Q003"
+        - cell "Registrar Window 1"
+        - 'cell "Enrollment Teller: Random Teller 1 Note: tesy"':
+          - text: Enrollment
+          - paragraph: "Teller: Random Teller 1"
+          - paragraph: "Note: tesy"
+        - cell "Completed":
+          - generic: Completed
+        - cell "May 8, 2026, 3:43 PM"
+        - cell "No action"
+      - 'row "Q002 Registrar Window 1 Enrollment Teller: Random Teller 1 Note: test Completed Apr 28, 2026, 8:05 PM No action"':
+        - cell "Q002"
+        - cell "Registrar Window 1"
+        - 'cell "Enrollment Teller: Random Teller 1 Note: test"':
+          - text: Enrollment
+          - paragraph: "Teller: Random Teller 1"
+          - paragraph: "Note: test"
+        - cell "Completed":
+          - generic: Completed
+        - cell "Apr 28, 2026, 8:05 PM"
+        - cell "No action"
+      - 'row "Q001 Registrar Window 1 Enrollment Teller: Random Teller 1 Note: test Screenshot (2).png Cancelled Apr 28, 2026, 8:03 PM No action"':
+        - cell "Q001"
+        - cell "Registrar Window 1"
+        - 'cell "Enrollment Teller: Random Teller 1 Note: test Screenshot (2).png"':
+          - text: Enrollment
+          - paragraph: "Teller: Random Teller 1"
+          - paragraph: "Note: test"
+          - button "Screenshot (2).png"
+        - cell "Cancelled":
+          - generic: Cancelled
+        - cell "Apr 28, 2026, 8:03 PM"
+        - cell "No action"

@@ -1,0 +1,20 @@
+[
+  {
+    "role": "user",
+    "passed": true,
+    "url": "http://localhost:5173/dashboard",
+    "screenshot": "user-dashboard.png"
+  },
+  {
+    "role": "teller",
+    "passed": true,
+    "url": "http://localhost:5173/dashboard",
+    "screenshot": "teller-dashboard.png"
+  },
+  {
+    "role": "admin",
+    "passed": true,
+    "url": "http://localhost:5173/dashboard",
+    "screenshot": "admin-dashboard.png"
+  }
+]

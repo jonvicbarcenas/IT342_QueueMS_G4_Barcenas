@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { useAuth } from '@/context';
+import { useAuth } from '@/features/auth';
 
 const AccountMenu = () => {
   const { user, updateProfile, logout } = useAuth();

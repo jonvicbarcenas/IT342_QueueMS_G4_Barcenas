@@ -3,8 +3,8 @@ package edu.cit.barcenas.queuems.pattern.observer;
 import edu.cit.barcenas.queuems.model.ServiceRequest;
 import edu.cit.barcenas.queuems.model.User;
 import edu.cit.barcenas.queuems.repository.UserRepository;
-import edu.cit.barcenas.queuems.service.EmailService;
-import edu.cit.barcenas.queuems.service.FcmService;
+import edu.cit.barcenas.queuems.infrastructure.notification.EmailService;
+import edu.cit.barcenas.queuems.infrastructure.notification.FcmService;
 import org.springframework.stereotype.Component;
 
 /**

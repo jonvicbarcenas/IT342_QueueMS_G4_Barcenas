@@ -1,0 +1,218 @@
+QUEUEMS TELLER
+
+Counter Queue Dashboard
+RT
+Random Teller 1
+TELLER
+v
+
+Signed in as Random Teller 1 (teller1@gmail.com)
+
+SERVE. UPDATE. PREVENT.
+
+Role: TELLER
+
+Refresh Queue
+
+ASSIGNED COUNTER
+
+Registrar Window 1
+
+Enrollment
+
+OPENClose Counter
+Queue Summary
+
+TOTAL
+
+7
+
+PENDING
+
+0
+
+SERVING
+
+0
+
+COMPLETED
+
+6
+
+Assigned Requests
+
+Requests submitted to your assigned counter.
+
+Serve Next
+
+QUEUE
+
+Q007
+
+SERVICE
+
+Enrollment
+
+Note: lolskie
+
+STATUS
+
+COMPLETED
+
+DOCUMENT
+
+No document
+
+CREATED
+
+May 8, 2026, 5:17 PM
+
+No action
+
+QUEUE
+
+Q006
+
+SERVICE
+
+Enrollment
+
+Note: lolskie
+
+STATUS
+
+COMPLETED
+
+DOCUMENT
+
+No document
+
+CREATED
+
+May 8, 2026, 4:48 PM
+
+No action
+
+QUEUE
+
+Q005
+
+SERVICE
+
+Enrollment
+
+Note: testung
+
+STATUS
+
+COMPLETED
+
+DOCUMENT
+
+View Document
+
+received_1197383132331061.jpeg
+
+CREATED
+
+May 8, 2026, 4:18 PM
+
+No action
+
+QUEUE
+
+Q004
+
+SERVICE
+
+Enrollment
+
+Note: testtt
+
+STATUS
+
+COMPLETED
+
+DOCUMENT
+
+No document
+
+CREATED
+
+May 8, 2026, 4:10 PM
+
+No action
+
+QUEUE
+
+Q003
+
+SERVICE
+
+Enrollment
+
+Note: tesy
+
+STATUS
+
+COMPLETED
+
+DOCUMENT
+
+No document
+
+CREATED
+
+May 8, 2026, 3:43 PM
+
+No action
+
+QUEUE
+
+Q002
+
+SERVICE
+
+Enrollment
+
+Note: test
+
+STATUS
+
+COMPLETED
+
+DOCUMENT
+
+No document
+
+CREATED
+
+Apr 28, 2026, 8:05 PM
+
+No action
+
+QUEUE
+
+Q001
+
+SERVICE
+
+Enrollment
+
+Note: test
+
+STATUS
+
+CANCELLED
+
+DOCUMENT
+
+View Document
+
+Screenshot (2).png
+
+CREATED
+
+Apr 28, 2026, 8:03 PM
+
+No action

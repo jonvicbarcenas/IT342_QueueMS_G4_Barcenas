@@ -1,0 +1,182 @@
+- navigation:
+  - paragraph: QueueMS Admin
+  - heading "Superadmin Dashboard" [level=1]
+  - button "IA I am Admin SUPERADMIN v":
+    - generic: IA
+    - generic: I am Admin
+    - generic: SUPERADMIN
+    - generic: v
+- main:
+  - paragraph: Signed in as I am Admin (humbamanok2@gmail.com)
+  - paragraph: MANAGE. ROUTE. PREVENT.
+  - paragraph: "Role: SUPERADMIN"
+  - button "Refresh Dashboard"
+  - paragraph: All Requests
+  - paragraph: "7"
+  - paragraph: Pending
+  - paragraph: "0"
+  - paragraph: Serving
+  - paragraph: "0"
+  - paragraph: Open Counters
+  - paragraph: "1"
+  - heading "Create Counter" [level=2]
+  - paragraph: Service requests use these counter records and teller assignments.
+  - generic: Counter Name
+  - textbox "Registrar Window 1"
+  - generic: Service Type
+  - textbox "Records and Enrollment"
+  - generic: Status
+  - combobox "Status":
+    - option "Open" [selected]
+    - option "Closed"
+  - generic: Assigned Teller
+  - combobox "Assigned Teller":
+    - option "No teller" [selected]
+    - option "Random Teller 1"
+  - button "Create Counter"
+  - table:
+    - rowgroup:
+      - row "Counter Teller Status Action":
+        - columnheader "Counter"
+        - columnheader "Teller"
+        - columnheader "Status"
+        - columnheader "Action"
+    - rowgroup:
+      - row "Registrar Window 1 Enrollment Random Teller 1 OPEN Edit Delete":
+        - cell "Registrar Window 1 Enrollment":
+          - paragraph: Registrar Window 1
+          - paragraph: Enrollment
+        - cell "Random Teller 1"
+        - cell "OPEN":
+          - generic: OPEN
+        - cell "Edit Delete":
+          - button "Edit"
+          - button "Delete"
+  - heading "Create Staff Account" [level=2]
+  - paragraph: Tellers can be assigned to counters from this form or from counter editing.
+  - generic: First Name
+  - textbox
+  - generic: Last Name
+  - textbox
+  - generic: Email
+  - textbox
+  - generic: Temporary Password
+  - textbox
+  - generic: Role
+  - combobox "Role":
+    - option "Teller" [selected]
+    - option "Superadmin"
+  - generic: Counter
+  - combobox "Counter":
+    - option "No counter" [selected]
+    - option "Registrar Window 1"
+  - button "Create Staff Account"
+  - table:
+    - rowgroup:
+      - row "User Role Counter Action":
+        - columnheader "User"
+        - columnheader "Role"
+        - columnheader "Counter"
+        - columnheader "Action"
+    - rowgroup:
+      - row "Jon Vic Barcenas humbamanok1@gmail.com USER None Edit Delete":
+        - cell "Jon Vic Barcenas humbamanok1@gmail.com":
+          - paragraph: Jon Vic Barcenas
+          - paragraph: humbamanok1@gmail.com
+        - cell "USER"
+        - cell "None"
+        - cell "Edit Delete":
+          - button "Edit"
+          - button "Delete"
+      - row "I am Admin humbamanok2@gmail.com SUPERADMIN None Edit Delete":
+        - cell "I am Admin humbamanok2@gmail.com":
+          - paragraph: I am Admin
+          - paragraph: humbamanok2@gmail.com
+        - cell "SUPERADMIN"
+        - cell "None"
+        - cell "Edit Delete":
+          - button "Edit"
+          - button "Delete"
+      - row "Random Teller 1 teller1@gmail.com TELLER Registrar Window 1 Edit Delete":
+        - cell "Random Teller 1 teller1@gmail.com":
+          - paragraph: Random Teller 1
+          - paragraph: teller1@gmail.com
+        - cell "TELLER"
+        - cell "Registrar Window 1"
+        - cell "Edit Delete":
+          - button "Edit"
+          - button "Delete"
+  - heading "All Service Requests" [level=2]
+  - paragraph: Requests across every admin-managed counter.
+  - table:
+    - rowgroup:
+      - row "Queue No. Counter Teller Status Created":
+        - columnheader "Queue No."
+        - columnheader "Counter"
+        - columnheader "Teller"
+        - columnheader "Status"
+        - columnheader "Created"
+    - rowgroup:
+      - row "Q007 Registrar Window 1 Enrollment Random Teller 1 COMPLETED May 8, 2026, 5:17 PM":
+        - cell "Q007"
+        - cell "Registrar Window 1 Enrollment":
+          - paragraph: Registrar Window 1
+          - paragraph: Enrollment
+        - cell "Random Teller 1"
+        - cell "COMPLETED":
+          - generic: COMPLETED
+        - cell "May 8, 2026, 5:17 PM"
+      - row "Q006 Registrar Window 1 Enrollment Random Teller 1 COMPLETED May 8, 2026, 4:48 PM":
+        - cell "Q006"
+        - cell "Registrar Window 1 Enrollment":
+          - paragraph: Registrar Window 1
+          - paragraph: Enrollment
+        - cell "Random Teller 1"
+        - cell "COMPLETED":
+          - generic: COMPLETED
+        - cell "May 8, 2026, 4:48 PM"
+      - row "Q005 Registrar Window 1 Enrollment Random Teller 1 COMPLETED May 8, 2026, 4:18 PM":
+        - cell "Q005"
+        - cell "Registrar Window 1 Enrollment":
+          - paragraph: Registrar Window 1
+          - paragraph: Enrollment
+        - cell "Random Teller 1"
+        - cell "COMPLETED":
+          - generic: COMPLETED
+        - cell "May 8, 2026, 4:18 PM"
+      - row "Q004 Registrar Window 1 Enrollment Random Teller 1 COMPLETED May 8, 2026, 4:10 PM":
+        - cell "Q004"
+        - cell "Registrar Window 1 Enrollment":
+          - paragraph: Registrar Window 1
+          - paragraph: Enrollment
+        - cell "Random Teller 1"
+        - cell "COMPLETED":
+          - generic: COMPLETED
+        - cell "May 8, 2026, 4:10 PM"
+      - row "Q003 Registrar Window 1 Enrollment Random Teller 1 COMPLETED May 8, 2026, 3:43 PM":
+        - cell "Q003"
+        - cell "Registrar Window 1 Enrollment":
+          - paragraph: Registrar Window 1
+          - paragraph: Enrollment
+        - cell "Random Teller 1"
+        - cell "COMPLETED":
+          - generic: COMPLETED
+        - cell "May 8, 2026, 3:43 PM"
+      - row "Q002 Registrar Window 1 Enrollment Random Teller 1 COMPLETED Apr 28, 2026, 8:05 PM":
+        - cell "Q002"
+        - cell "Registrar Window 1 Enrollment":
+          - paragraph: Registrar Window 1
+          - paragraph: Enrollment
+        - cell "Random Teller 1"
+        - cell "COMPLETED":
+          - generic: COMPLETED
+        - cell "Apr 28, 2026, 8:05 PM"
+      - row "Q001 Registrar Window 1 Enrollment Random Teller 1 CANCELLED Apr 28, 2026, 8:03 PM":
+        - cell "Q001"
+        - cell "Registrar Window 1 Enrollment":
+          - paragraph: Registrar Window 1
+          - paragraph: Enrollment
+        - cell "Random Teller 1"
+        - cell "CANCELLED":
+          - generic: CANCELLED
+        - cell "Apr 28, 2026, 8:03 PM"
